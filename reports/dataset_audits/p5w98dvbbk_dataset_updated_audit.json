@@ -1,0 +1,380 @@
+{
+  "summary": {
+    "name": "p5w98dvbbk_dataset_updated",
+    "source_path": "C:\\Users\\Lenovo\\Desktop\\code\\VascularAI\\data\\external\\p5w98dvbbk_dataset_updated.csv",
+    "header_row": 0,
+    "rows": 1205,
+    "columns": 12
+  },
+  "columns": [
+    {
+      "column": "Age",
+      "normalized": "age",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 43,
+      "sample_values": [
+        "22",
+        "22",
+        "27",
+        "20",
+        "20"
+      ]
+    },
+    {
+      "column": "Systolic BP",
+      "normalized": "systolic_bp",
+      "dtype": "float64",
+      "missing_count": 5,
+      "missing_rate": 0.0041,
+      "sentinel_rate": 0.0,
+      "distinct_count": 24,
+      "sample_values": [
+        "90.0",
+        "110.0",
+        "110.0",
+        "100.0",
+        "90.0"
+      ]
+    },
+    {
+      "column": "Diastolic",
+      "normalized": "diastolic",
+      "dtype": "float64",
+      "missing_count": 4,
+      "missing_rate": 0.0033,
+      "sentinel_rate": 0.0,
+      "distinct_count": 21,
+      "sample_values": [
+        "60.0",
+        "70.0",
+        "70.0",
+        "70.0",
+        "60.0"
+      ]
+    },
+    {
+      "column": "BS",
+      "normalized": "bs",
+      "dtype": "float64",
+      "missing_count": 2,
+      "missing_rate": 0.0017,
+      "sentinel_rate": 0.0,
+      "distinct_count": 84,
+      "sample_values": [
+        "9.0",
+        "7.1",
+        "7.5",
+        "7.2",
+        "7.5"
+      ]
+    },
+    {
+      "column": "Body Temp",
+      "normalized": "body_temp",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 7,
+      "sample_values": [
+        "100",
+        "98",
+        "98",
+        "98",
+        "98"
+      ]
+    },
+    {
+      "column": "BMI",
+      "normalized": "bmi",
+      "dtype": "float64",
+      "missing_count": 18,
+      "missing_rate": 0.0149,
+      "sentinel_rate": 0.0,
+      "distinct_count": 157,
+      "sample_values": [
+        "18.0",
+        "20.4",
+        "23.0",
+        "21.2",
+        "19.7"
+      ]
+    },
+    {
+      "column": "Previous Complications",
+      "normalized": "previous_complications",
+      "dtype": "float64",
+      "missing_count": 2,
+      "missing_rate": 0.0017,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "1.0",
+        "0.0",
+        "1.0",
+        "0.0",
+        "0.0"
+      ]
+    },
+    {
+      "column": "Preexisting Diabetes",
+      "normalized": "preexisting_diabetes",
+      "dtype": "float64",
+      "missing_count": 2,
+      "missing_rate": 0.0017,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "1.0",
+        "0.0",
+        "0.0",
+        "0.0",
+        "0.0"
+      ]
+    },
+    {
+      "column": "Gestational Diabetes",
+      "normalized": "gestational_diabetes",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "column": "Mental Health",
+      "normalized": "mental_health",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "1",
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    },
+    {
+      "column": "Heart Rate",
+      "normalized": "heart_rate",
+      "dtype": "float64",
+      "missing_count": 2,
+      "missing_rate": 0.0017,
+      "sentinel_rate": 0.0,
+      "distinct_count": 31,
+      "sample_values": [
+        "80.0",
+        "74.0",
+        "72.0",
+        "74.0",
+        "74.0"
+      ]
+    },
+    {
+      "column": "Risk Level",
+      "normalized": "risk_level",
+      "dtype": "str",
+      "missing_count": 18,
+      "missing_rate": 0.0149,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "High",
+        "Low",
+        "Low",
+        "Low",
+        "Low"
+      ]
+    }
+  ],
+  "numeric_ranges": [
+    {
+      "column": "Age",
+      "valid_numeric_count": 1205,
+      "min": 10.0,
+      "p25": 21.0,
+      "median": 25.0,
+      "p75": 32.0,
+      "max": 325.0,
+      "iqr_outliers": 58,
+      "clinical_range": [
+        10,
+        55
+      ],
+      "outside_clinical_range": 18
+    },
+    {
+      "column": "Systolic BP",
+      "valid_numeric_count": 1200,
+      "min": 70.0,
+      "p25": 100.0,
+      "median": 120.0,
+      "p75": 130.0,
+      "max": 200.0,
+      "iqr_outliers": 8,
+      "clinical_range": [
+        70,
+        220
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "Diastolic",
+      "valid_numeric_count": 1201,
+      "min": 40.0,
+      "p25": 65.0,
+      "median": 80.0,
+      "p75": 90.0,
+      "max": 140.0,
+      "iqr_outliers": 2,
+      "clinical_range": [
+        40,
+        140
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "BS",
+      "valid_numeric_count": 1203,
+      "min": 3.0,
+      "p25": 6.0,
+      "median": 6.9,
+      "p75": 7.9,
+      "max": 19.0,
+      "iqr_outliers": 181,
+      "clinical_range": [
+        2,
+        35
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "Body Temp",
+      "valid_numeric_count": 1205,
+      "min": 97.0,
+      "p25": 98.0,
+      "median": 98.0,
+      "p75": 98.0,
+      "max": 103.0,
+      "iqr_outliers": 175,
+      "clinical_range": [
+        94,
+        106
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "BMI",
+      "valid_numeric_count": 1187,
+      "min": 0.0,
+      "p25": 20.45,
+      "median": 23.0,
+      "p75": 25.0,
+      "max": 37.0,
+      "iqr_outliers": 37,
+      "clinical_range": [
+        10,
+        70
+      ],
+      "outside_clinical_range": 1
+    },
+    {
+      "column": "Previous Complications",
+      "valid_numeric_count": 1203,
+      "min": 0.0,
+      "p25": 0.0,
+      "median": 0.0,
+      "p75": 0.0,
+      "max": 1.0,
+      "iqr_outliers": 211,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "Preexisting Diabetes",
+      "valid_numeric_count": 1203,
+      "min": 0.0,
+      "p25": 0.0,
+      "median": 0.0,
+      "p75": 1.0,
+      "max": 1.0,
+      "iqr_outliers": 0,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "Gestational Diabetes",
+      "valid_numeric_count": 1205,
+      "min": 0.0,
+      "p25": 0.0,
+      "median": 0.0,
+      "p75": 0.0,
+      "max": 1.0,
+      "iqr_outliers": 142,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "Mental Health",
+      "valid_numeric_count": 1205,
+      "min": 0.0,
+      "p25": 0.0,
+      "median": 0.0,
+      "p75": 1.0,
+      "max": 1.0,
+      "iqr_outliers": 0,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "Heart Rate",
+      "valid_numeric_count": 1203,
+      "min": 58.0,
+      "p25": 70.0,
+      "median": 76.0,
+      "p75": 80.0,
+      "max": 92.0,
+      "iqr_outliers": 0,
+      "clinical_range": [
+        40,
+        180
+      ],
+      "outside_clinical_range": 0
+    }
+  ],
+  "target_profiles": [
+    {
+      "column": "Risk Level",
+      "distinct_count": 3,
+      "top_values": {
+        "Low": 713,
+        "High": 474,
+        "nan": 18
+      }
+    }
+  ],
+  "duplicate_profile": {
+    "exact_duplicate_rows": 18,
+    "exact_duplicate_rate": 0.0149,
+    "id_like_key_checks": {}
+  },
+  "leakage_candidates": [],
+  "warnings": [
+    "Exact duplicate rate is above 1%; verify dataset grain before training.",
+    "Column `Age` has 18 values outside expected clinical range.",
+    "Column `BMI` has 1 values outside expected clinical range."
+  ]
+}

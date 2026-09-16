@@ -1,0 +1,356 @@
+{
+  "summary": {
+    "name": "ckhgtgdg4f_springer",
+    "source_path": "C:\\Users\\Lenovo\\Desktop\\code\\VascularAI\\data\\external\\ckhgtgdg4f_springer.csv",
+    "header_row": 0,
+    "rows": 6103,
+    "columns": 11
+  },
+  "columns": [
+    {
+      "column": "Patient ID",
+      "normalized": "patient_id",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 6103,
+      "sample_values": [
+        "101",
+        "102",
+        "103",
+        "104",
+        "105"
+      ]
+    },
+    {
+      "column": "Name",
+      "normalized": "name",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 5794,
+      "sample_values": [
+        "Bhavana",
+        "Mithila",
+        "Phoolan",
+        "Joyonti",
+        "Vana"
+      ]
+    },
+    {
+      "column": "Age",
+      "normalized": "age",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 35,
+      "sample_values": [
+        "20",
+        "45",
+        "29",
+        "26",
+        "38"
+      ]
+    },
+    {
+      "column": "Body Temperature(F) ",
+      "normalized": "body_temperature_f",
+      "dtype": "float64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 104,
+      "sample_values": [
+        "97.5",
+        "97.7",
+        "98.6",
+        "99.5",
+        "102.5"
+      ]
+    },
+    {
+      "column": "Heart rate(bpm)",
+      "normalized": "heart_rate_bpm",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 106,
+      "sample_values": [
+        "91",
+        "99",
+        "84",
+        "135",
+        "51"
+      ]
+    },
+    {
+      "column": "Systolic Blood Pressure(mm Hg)",
+      "normalized": "systolic_blood_pressure_mm_hg",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 79,
+      "sample_values": [
+        "161",
+        "99",
+        "129",
+        "161",
+        "106"
+      ]
+    },
+    {
+      "column": "Diastolic Blood Pressure(mm Hg)",
+      "normalized": "diastolic_blood_pressure_mm_hg",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 65,
+      "sample_values": [
+        "100",
+        "94",
+        "87",
+        "101",
+        "91"
+      ]
+    },
+    {
+      "column": "BMI(kg/m 2)",
+      "normalized": "bmi_kg_m_2",
+      "dtype": "float64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 127,
+      "sample_values": [
+        "24.9",
+        "22.1",
+        "19.0",
+        "23.7",
+        "18.8"
+      ]
+    },
+    {
+      "column": "Blood Glucose(HbA1c)",
+      "normalized": "blood_glucose_hba1c",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 21,
+      "sample_values": [
+        "41",
+        "36",
+        "42",
+        "46",
+        "38"
+      ]
+    },
+    {
+      "column": "Blood Glucose(Fasting hour-mg/dl)",
+      "normalized": "blood_glucose_fasting_hour_mg_dl",
+      "dtype": "float64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 49,
+      "sample_values": [
+        "5.8",
+        "5.7",
+        "6.4",
+        "4.5",
+        "4.3"
+      ]
+    },
+    {
+      "column": "Status",
+      "normalized": "status",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 3,
+      "sample_values": [
+        "high risk",
+        "high risk",
+        "mid risk",
+        "high risk",
+        "high risk"
+      ]
+    }
+  ],
+  "numeric_ranges": [
+    {
+      "column": "Patient ID",
+      "valid_numeric_count": 6103,
+      "min": 101.0,
+      "p25": 1626.5,
+      "median": 3152.0,
+      "p75": 4677.5,
+      "max": 6203.0,
+      "iqr_outliers": 0,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "Age",
+      "valid_numeric_count": 6103,
+      "min": 15.0,
+      "p25": 22.0,
+      "median": 25.0,
+      "p75": 30.0,
+      "max": 250.0,
+      "iqr_outliers": 86,
+      "clinical_range": [
+        10,
+        55
+      ],
+      "outside_clinical_range": 1
+    },
+    {
+      "column": "Body Temperature(F) ",
+      "valid_numeric_count": 6103,
+      "min": 39.6,
+      "p25": 98.6,
+      "median": 98.6,
+      "p75": 98.8,
+      "max": 104.0,
+      "iqr_outliers": 1763,
+      "clinical_range": [
+        94,
+        106
+      ],
+      "outside_clinical_range": 4
+    },
+    {
+      "column": "Heart rate(bpm)",
+      "valid_numeric_count": 6103,
+      "min": 45.0,
+      "p25": 72.0,
+      "median": 80.0,
+      "p75": 91.0,
+      "max": 150.0,
+      "iqr_outliers": 742,
+      "clinical_range": [
+        40,
+        180
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "Systolic Blood Pressure(mm Hg)",
+      "valid_numeric_count": 6103,
+      "min": 90.0,
+      "p25": 120.0,
+      "median": 128.0,
+      "p75": 141.0,
+      "max": 169.0,
+      "iqr_outliers": 0,
+      "clinical_range": [
+        70,
+        220
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "Diastolic Blood Pressure(mm Hg)",
+      "valid_numeric_count": 6103,
+      "min": 9.0,
+      "p25": 82.0,
+      "median": 87.0,
+      "p75": 92.0,
+      "max": 142.0,
+      "iqr_outliers": 149,
+      "clinical_range": [
+        40,
+        140
+      ],
+      "outside_clinical_range": 2
+    },
+    {
+      "column": "BMI(kg/m 2)",
+      "valid_numeric_count": 6103,
+      "min": 14.9,
+      "p25": 19.6,
+      "median": 21.3,
+      "p75": 23.1,
+      "max": 27.9,
+      "iqr_outliers": 0,
+      "clinical_range": [
+        10,
+        70
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "Blood Glucose(HbA1c)",
+      "valid_numeric_count": 6103,
+      "min": 30.0,
+      "p25": 34.0,
+      "median": 38.0,
+      "p75": 41.0,
+      "max": 50.0,
+      "iqr_outliers": 0,
+      "clinical_range": [
+        20,
+        140
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "Blood Glucose(Fasting hour-mg/dl)",
+      "valid_numeric_count": 6103,
+      "min": 3.5,
+      "p25": 4.8,
+      "median": 5.7,
+      "p75": 6.0,
+      "max": 8.9,
+      "iqr_outliers": 27,
+      "clinical_range": [
+        2,
+        35
+      ],
+      "outside_clinical_range": 0
+    }
+  ],
+  "target_profiles": [
+    {
+      "column": "Status",
+      "distinct_count": 3,
+      "top_values": {
+        "high risk": 2059,
+        "mid risk": 2043,
+        "low risk": 2001
+      }
+    }
+  ],
+  "duplicate_profile": {
+    "exact_duplicate_rows": 0,
+    "exact_duplicate_rate": 0.0,
+    "id_like_key_checks": {
+      "Patient ID": {
+        "duplicated_rows": 0,
+        "duplicated_rate": 0.0,
+        "distinct_count": 6103
+      },
+      "Name": {
+        "duplicated_rows": 609,
+        "duplicated_rate": 0.0998,
+        "distinct_count": 5794
+      }
+    }
+  },
+  "leakage_candidates": [],
+  "warnings": [
+    "Column `Age` has 1 values outside expected clinical range.",
+    "Column `Body Temperature(F) ` has 4 values outside expected clinical range.",
+    "Column `Diastolic Blood Pressure(mm Hg)` has 2 values outside expected clinical range.",
+    "Column `Blood Glucose(HbA1c)` looks like HbA1c in IFCC mmol/mol, not percent; confirm units before modeling.",
+    "Column `Blood Glucose(Fasting hour-mg/dl)` is named mg/dL but values look like mmol/L; confirm units before mapping to `BS`."
+  ]
+}

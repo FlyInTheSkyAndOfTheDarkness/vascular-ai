@@ -1,0 +1,544 @@
+{
+  "summary": {
+    "name": "mother_care2_clinical_maternal_dataset",
+    "source_path": "C:\\Users\\Lenovo\\Desktop\\code\\VascularAI\\data\\external\\mother_care2_clinical_maternal_dataset.csv",
+    "header_row": 0,
+    "rows": 111,
+    "columns": 21
+  },
+  "columns": [
+    {
+      "column": "patient_id",
+      "normalized": "patient_id",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 111,
+      "sample_values": [
+        "P001",
+        "P002",
+        "P003",
+        "P004",
+        "P005"
+      ]
+    },
+    {
+      "column": "mother_age_years",
+      "normalized": "mother_age_years",
+      "dtype": "float64",
+      "missing_count": 5,
+      "missing_rate": 0.045,
+      "sentinel_rate": 0.0,
+      "distinct_count": 23,
+      "sample_values": [
+        "28.0",
+        "30.0",
+        "18.0",
+        "20.0",
+        "18.0"
+      ]
+    },
+    {
+      "column": "gravida_raw",
+      "normalized": "gravida_raw",
+      "dtype": "float64",
+      "missing_count": 5,
+      "missing_rate": 0.045,
+      "sentinel_rate": 0.0,
+      "distinct_count": 5,
+      "sample_values": [
+        "2.0",
+        "2.0",
+        "1.0",
+        "1.0",
+        "1.0"
+      ]
+    },
+    {
+      "column": "gravida_filled",
+      "normalized": "gravida_filled",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 5,
+      "sample_values": [
+        "2",
+        "2",
+        "1",
+        "1",
+        "1"
+      ]
+    },
+    {
+      "column": "parity_raw",
+      "normalized": "parity_raw",
+      "dtype": "float64",
+      "missing_count": 40,
+      "missing_rate": 0.3604,
+      "sentinel_rate": 0.0,
+      "distinct_count": 4,
+      "sample_values": [
+        "1.0",
+        "1.0",
+        "0.0",
+        "0.0",
+        "0.0"
+      ]
+    },
+    {
+      "column": "parity_filled",
+      "normalized": "parity_filled",
+      "dtype": "float64",
+      "missing_count": 15,
+      "missing_rate": 0.1351,
+      "sentinel_rate": 0.0,
+      "distinct_count": 4,
+      "sample_values": [
+        "1.0",
+        "1.0",
+        "0.0",
+        "0.0",
+        "0.0"
+      ]
+    },
+    {
+      "column": "gestational_age_weeks",
+      "normalized": "gestational_age_weeks",
+      "dtype": "float64",
+      "missing_count": 15,
+      "missing_rate": 0.1351,
+      "sentinel_rate": 0.0,
+      "distinct_count": 19,
+      "sample_values": [
+        "38.0",
+        "38.0",
+        "39.0",
+        "37.0",
+        "38.0"
+      ]
+    },
+    {
+      "column": "systolic_bp_mmhg",
+      "normalized": "systolic_bp_mmhg",
+      "dtype": "float64",
+      "missing_count": 19,
+      "missing_rate": 0.1712,
+      "sentinel_rate": 0.0,
+      "distinct_count": 9,
+      "sample_values": [
+        "100.0",
+        "120.0",
+        "110.0",
+        "120.0",
+        "100.0"
+      ]
+    },
+    {
+      "column": "diastolic_bp_mmhg",
+      "normalized": "diastolic_bp_mmhg",
+      "dtype": "float64",
+      "missing_count": 19,
+      "missing_rate": 0.1712,
+      "sentinel_rate": 0.0,
+      "distinct_count": 8,
+      "sample_values": [
+        "60.0",
+        "100.0",
+        "70.0",
+        "80.0",
+        "70.0"
+      ]
+    },
+    {
+      "column": "hemoglobin_g_dl",
+      "normalized": "hemoglobin_g_dl",
+      "dtype": "float64",
+      "missing_count": 16,
+      "missing_rate": 0.1441,
+      "sentinel_rate": 0.0,
+      "distinct_count": 40,
+      "sample_values": [
+        "10.5",
+        "10.8",
+        "8.7",
+        "10.8",
+        "10.9"
+      ]
+    },
+    {
+      "column": "age_risk",
+      "normalized": "age_risk",
+      "dtype": "str",
+      "missing_count": 4,
+      "missing_rate": 0.036,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "No",
+        "No",
+        "Yes",
+        "No",
+        "Yes"
+      ]
+    },
+    {
+      "column": "anemia_flag",
+      "normalized": "anemia_flag",
+      "dtype": "str",
+      "missing_count": 16,
+      "missing_rate": 0.1441,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "Yes",
+        "Yes",
+        "Yes",
+        "Yes",
+        "Yes"
+      ]
+    },
+    {
+      "column": "hypertension_flag",
+      "normalized": "hypertension_flag",
+      "dtype": "str",
+      "missing_count": 19,
+      "missing_rate": 0.1712,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "No",
+        "Yes",
+        "No",
+        "No",
+        "No"
+      ]
+    },
+    {
+      "column": "preterm_risk",
+      "normalized": "preterm_risk",
+      "dtype": "str",
+      "missing_count": 15,
+      "missing_rate": 0.1351,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "No",
+        "No",
+        "No",
+        "No",
+        "No"
+      ]
+    },
+    {
+      "column": "low_birth_weight",
+      "normalized": "low_birth_weight",
+      "dtype": "str",
+      "missing_count": 18,
+      "missing_rate": 0.1622,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "No",
+        "No",
+        "Yes",
+        "No",
+        "Yes"
+      ]
+    },
+    {
+      "column": "delivery_mode",
+      "normalized": "delivery_mode",
+      "dtype": "str",
+      "missing_count": 19,
+      "missing_rate": 0.1712,
+      "sentinel_rate": 0.0,
+      "distinct_count": 3,
+      "sample_values": [
+        "C/S",
+        "C/S",
+        "C/S",
+        "C/S",
+        "C/S"
+      ]
+    },
+    {
+      "column": "baby_sex",
+      "normalized": "baby_sex",
+      "dtype": "str",
+      "missing_count": 20,
+      "missing_rate": 0.1802,
+      "sentinel_rate": 0.018,
+      "distinct_count": 3,
+      "sample_values": [
+        "M",
+        "F",
+        "M",
+        "M",
+        "M"
+      ]
+    },
+    {
+      "column": "birth_weight_grams",
+      "normalized": "birth_weight_grams",
+      "dtype": "float64",
+      "missing_count": 18,
+      "missing_rate": 0.1622,
+      "sentinel_rate": 0.0,
+      "distinct_count": 26,
+      "sample_values": [
+        "2500.0",
+        "3000.0",
+        "1500.0",
+        "3000.0",
+        "2200.0"
+      ]
+    },
+    {
+      "column": "apgar_1min",
+      "normalized": "apgar_1min",
+      "dtype": "float64",
+      "missing_count": 18,
+      "missing_rate": 0.1622,
+      "sentinel_rate": 0.0,
+      "distinct_count": 7,
+      "sample_values": [
+        "8.0",
+        "8.0",
+        "8.0",
+        "8.0",
+        "8.0"
+      ]
+    },
+    {
+      "column": "apgar_5min",
+      "normalized": "apgar_5min",
+      "dtype": "float64",
+      "missing_count": 19,
+      "missing_rate": 0.1712,
+      "sentinel_rate": 0.0,
+      "distinct_count": 5,
+      "sample_values": [
+        "10.0",
+        "10.0",
+        "10.0",
+        "10.0",
+        "9.0"
+      ]
+    },
+    {
+      "column": "high_risk",
+      "normalized": "high_risk",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "Yes",
+        "Yes",
+        "Yes",
+        "Yes",
+        "Yes"
+      ]
+    }
+  ],
+  "numeric_ranges": [
+    {
+      "column": "mother_age_years",
+      "valid_numeric_count": 106,
+      "min": 17.0,
+      "p25": 20.0,
+      "median": 24.0,
+      "p75": 29.0,
+      "max": 44.0,
+      "iqr_outliers": 2,
+      "clinical_range": [
+        10,
+        55
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "gravida_raw",
+      "valid_numeric_count": 106,
+      "min": 1.0,
+      "p25": 1.0,
+      "median": 2.0,
+      "p75": 2.0,
+      "max": 5.0,
+      "iqr_outliers": 4,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "gravida_filled",
+      "valid_numeric_count": 111,
+      "min": 1.0,
+      "p25": 1.0,
+      "median": 2.0,
+      "p75": 2.0,
+      "max": 5.0,
+      "iqr_outliers": 4,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "parity_raw",
+      "valid_numeric_count": 71,
+      "min": 0.0,
+      "p25": 0.0,
+      "median": 1.0,
+      "p75": 1.0,
+      "max": 3.0,
+      "iqr_outliers": 1,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "parity_filled",
+      "valid_numeric_count": 96,
+      "min": 0.0,
+      "p25": 0.0,
+      "median": 0.0,
+      "p75": 1.0,
+      "max": 3.0,
+      "iqr_outliers": 1,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "gestational_age_weeks",
+      "valid_numeric_count": 96,
+      "min": 17.0,
+      "p25": 36.0,
+      "median": 38.0,
+      "p75": 39.0,
+      "max": 44.0,
+      "iqr_outliers": 15,
+      "clinical_range": [
+        4,
+        45
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "systolic_bp_mmhg",
+      "valid_numeric_count": 92,
+      "min": 80.0,
+      "p25": 100.0,
+      "median": 110.0,
+      "p75": 120.0,
+      "max": 160.0,
+      "iqr_outliers": 1,
+      "clinical_range": [
+        70,
+        220
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "diastolic_bp_mmhg",
+      "valid_numeric_count": 92,
+      "min": 50.0,
+      "p25": 70.0,
+      "median": 70.0,
+      "p75": 80.0,
+      "max": 110.0,
+      "iqr_outliers": 7,
+      "clinical_range": [
+        40,
+        140
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "hemoglobin_g_dl",
+      "valid_numeric_count": 95,
+      "min": 6.4,
+      "p25": 10.025,
+      "median": 10.6,
+      "p75": 11.4,
+      "max": 13.0,
+      "iqr_outliers": 2,
+      "clinical_range": [
+        4,
+        20
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "birth_weight_grams",
+      "valid_numeric_count": 93,
+      "min": 500.0,
+      "p25": 2500.0,
+      "median": 2800.0,
+      "p75": 3200.0,
+      "max": 4500.0,
+      "iqr_outliers": 3,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "apgar_1min",
+      "valid_numeric_count": 93,
+      "min": 0.0,
+      "p25": 8.0,
+      "median": 8.0,
+      "p75": 8.0,
+      "max": 9.0,
+      "iqr_outliers": 11,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "apgar_5min",
+      "valid_numeric_count": 92,
+      "min": 6.0,
+      "p25": 10.0,
+      "median": 10.0,
+      "p75": 10.0,
+      "max": 10.0,
+      "iqr_outliers": 11,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    }
+  ],
+  "target_profiles": [
+    {
+      "column": "high_risk",
+      "distinct_count": 2,
+      "top_values": {
+        "Yes": 89,
+        "No": 22
+      }
+    }
+  ],
+  "duplicate_profile": {
+    "exact_duplicate_rows": 0,
+    "exact_duplicate_rate": 0.0,
+    "id_like_key_checks": {
+      "patient_id": {
+        "duplicated_rows": 0,
+        "duplicated_rate": 0.0,
+        "distinct_count": 111
+      }
+    }
+  },
+  "leakage_candidates": [
+    "age_risk",
+    "anemia_flag",
+    "hypertension_flag",
+    "preterm_risk",
+    "low_birth_weight",
+    "delivery_mode",
+    "birth_weight_grams",
+    "apgar_1min",
+    "apgar_5min"
+  ],
+  "warnings": [
+    "Potential leakage columns detected; review before modeling.",
+    "Column `parity_raw` has more than 20% missing values."
+  ]
+}

@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VascularAI 3D model</title>
+  <style>
+    :root {
+      /* Палитра лендинга VascularAI (значения 1:1 из лендинга) */
+      --ink: #4a3238;
+      --nav: #4a3238;
+      --blue: #bd6875;
+      --accent: #bd6875;
+      --accent-dark: #a85763;
+      --cyan: #e9aeb1;
+      --muted: #806b6c;
+      --line: #ead6cf;
+      --panel: #fffaf5;
+      --pale: #fdf8f5;
+      --pink: #f7d6d0;
+      --green: #328d84;
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      background: transparent;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    body {
+      font-family: Inter, Manrope, Arial, sans-serif;
+    }
+
+    .viewer {
+      background:
+        radial-gradient(circle at 64% 30%, rgba(233, 174, 177, 0.46), transparent 42%),
+        radial-gradient(circle at 28% 76%, rgba(50, 141, 132, 0.12), transparent 30%),
+        linear-gradient(145deg, rgba(255, 253, 250, 0.96), rgba(253, 248, 245, 0.92));
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+    }
+
+    .canvas-wrap {
+      height: 100%;
+      inset: 0;
+      position: absolute;
+      width: 100%;
+    }
+
+    canvas {
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
+
+    .poster {
+      height: 100%;
+      inset: 0;
+      object-fit: contain;
+      opacity: 0.16;
+      padding: 2.4rem;
+      position: absolute;
+      transition: opacity 360ms ease;
+      width: 100%;
+    }
+
+    .ready .poster,
+    .fallback .poster {
+      opacity: 0;
+    }
+
+    .label {
+      bottom: 0.85rem;
+      left: 0.9rem;
+      position: absolute;
+      z-index: 2;
+    }
+
+    .label span {
+      color: var(--accent);
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .label strong {
+      color: var(--ink);
+      display: block;
+      font-size: 1rem;
+      font-weight: 850;
+      line-height: 1.1;
+      margin-top: 0.22rem;
+    }
+
+    .status {
+      align-items: center;
+      background: rgba(255, 253, 250, 0.86);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink);
+      display: inline-flex;
+      font-size: 0.72rem;
+      font-weight: 800;
+      gap: 0.38rem;
+      padding: 0.32rem 0.56rem;
+      position: absolute;
+      right: 0.75rem;
+      top: 0.75rem;
+      z-index: 2;
+    }
+
+    .status::before {
+      background: var(--green);
+      border-radius: 999px;
+      content: "";
+      height: 0.45rem;
+      width: 0.45rem;
+    }
+
+    .fallback .status::before {
+      background: var(--accent);
+    }
+
+    .ring {
+      border: 1px solid rgba(190, 109, 119, 0.18);
+      border-radius: 50%;
+      height: min(62vw, 17rem);
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(-12deg);
+      width: min(62vw, 17rem);
+    }
+
+    .ring::after {
+      border: 1px dashed rgba(74, 50, 56, 0.14);
+      border-radius: 50%;
+      content: "";
+      inset: 1.15rem;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer loading" id="viewer">
+    <div class="ring" aria-hidden="true"></div>
+    <img class="poster" src="models/embryo-poster.png" alt="" />
+    <div class="canvas-wrap" id="wrap">
+      <canvas id="canvas" aria-label="3D модель развития плода и сосудистой системы"></canvas>
+    </div>
+    <div class="status" id="status">Загрузка 3D</div>
+    <div class="label">
+      <span>VascularAI</span>
+      <strong>Maternal risk model</strong>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      W as WebGLRenderer,
+      S as SRGBColorSpace,
+      A as ACESFilmicToneMapping,
+      a as Scene,
+      G as Group,
+      O as OrthographicCamera,
+      b as AmbientLight,
+      H as HemisphereLight,
+      D as DirectionalLight,
+      P as PointLight,
+      C as CatmullRomCurve3,
+      V as Vector3,
+      T as TubeGeometry,
+      M as MeshStandardMaterial,
+      c as Mesh,
+      d as MeshBasicMaterial,
+      e as AdditiveBlending,
+      f as GLTFLoader,
+      g as Color,
+      h as MathUtils,
+      i as MeshPhysicalMaterial,
+      j as SphereGeometry
+    } from "./assets/three-DBFNw0_3.js";
+
+    const viewer = document.getElementById("viewer");
+    const status = document.getElementById("status");
+    const wrap = document.getElementById("wrap");
+    const canvas = document.getElementById("canvas");
+
+    let renderer;
+    try {
+      renderer = new WebGLRenderer({
+        alpha: true,
+        antialias: true,
+        canvas,
+        powerPreference: "low-power"
+      });
+    } catch {
+      viewer.className = "viewer fallback";
+      status.textContent = "3D недоступно";
+      throw new Error("WebGL unavailable");
+    }
+
+    renderer.setClearColor(0, 0);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+
+    const scene = new Scene();
+    const root = new Group();
+    scene.add(root);
+
+    const camera = new OrthographicCamera(-2.5, 2.5, 2.5, -2.5, 0.1, 40);
+    camera.position.set(0, 0, 12);
+
+    scene.add(new AmbientLight(0xfffdfa, 1.18));
+    scene.add(new HemisphereLight(0xfffaf5, 0x4a3238, 1.82));
+
+    const key = new DirectionalLight(0xfff0ed, 2.8);
+    key.position.set(-3, 5, 6);
+    scene.add(key);
+
+    const rim = new DirectionalLight(0xe9aeb1, 1.62);
+    rim.position.set(4, 1, 2);
+    scene.add(rim);
+
+    const pulse = new PointLight(0xbd6875, 0.72, 4, 2);
+    pulse.position.set(0.2, -0.1, 1);
+    root.add(pulse);
+
+    const vessels = new Group();
+    root.add(vessels);
+
+    const curves = [
+      [[0.12, -0.28, -0.18], [0.62, -0.40, -0.24], [1.08, -0.56, -0.30], [1.38, -0.86, -0.34]],
+      [[1.08, -0.56, -0.30], [1.24, -0.24, -0.34], [1.48, -0.02, -0.42]],
+      [[0.62, -0.40, -0.24], [0.88, -0.82, -0.35], [1.02, -1.10, -0.40]],
+      [[-0.46, -0.14, -0.30], [-0.84, 0.08, -0.38], [-1.06, 0.48, -0.44], [-1.08, 0.78, -0.48]],
+      [[-0.84, 0.08, -0.38], [-1.18, -0.20, -0.40], [-1.42, -0.22, -0.46]]
+    ];
+
+    const vesselItems = curves.map((points, index) => {
+      const curve = new CatmullRomCurve3(points.map((point) => new Vector3(...point)));
+      const tube = new TubeGeometry(curve, 44, index === 0 ? 0.014 : 0.008, 6, false);
+      const material = new MeshStandardMaterial({
+        color: 0xbd6875,
+        emissive: 0xa85763,
+        emissiveIntensity: 0.16,
+        transparent: true,
+        opacity: 0.55,
+        roughness: 0.55,
+        depthWrite: false
+      });
+      const mesh = new Mesh(tube, material);
+      vessels.add(mesh);
+
+      const glow = new Mesh(
+        new TubeGeometry(curve, 44, index === 0 ? 0.034 : 0.026, 6, false),
+        new MeshBasicMaterial({
+          blending: AdditiveBlending,
+          color: 0xe9aeb1,
+          depthWrite: false,
+          opacity: 0.08,
+          transparent: true
+        })
+      );
+      vessels.add(glow);
+      return { glow, mesh };
+    });
+
+    function fallbackEmbryo() {
+      const group = new Group();
+      const material = new MeshPhysicalMaterial({
+        clearcoat: 0.12,
+        color: 0xe9aeb1,
+        ior: 1.33,
+        metalness: 0,
+        roughness: 0.42,
+        sheen: 0.35,
+        sheenColor: 0xfff0ed,
+        thickness: 0.34,
+        transmission: 0.07
+      });
+      const addSphere = (position, scale) => {
+        const mesh = new Mesh(new SphereGeometry(1, 40, 28), material);
+        mesh.position.fromArray(position);
+        mesh.scale.fromArray(scale);
+        group.add(mesh);
+      };
+      addSphere([-0.16, 0.82, 0], [0.58, 0.62, 0.50]);
+      addSphere([0.30, 0.62, 0.08], [0.30, 0.28, 0.34]);
+      addSphere([-0.28, 0.02, 0], [0.37, 0.54, 0.31]);
+      addSphere([-0.10, -0.42, 0], [0.37, 0.33, 0.35]);
+      addSphere([0.24, -0.66, 0.16], [0.29, 0.24, 0.22]);
+      addSphere([0.16, -0.88, 0.22], [0.25, 0.14, 0.16]);
+      return group;
+    }
+
+    function fitLoadedModel(model) {
+      model.position.set(0, -0.02, 0);
+      model.rotation.set(0.02, 0.12, -0.035);
+      model.scale.setScalar(1.02);
+      return model;
+    }
+
+    let model = fallbackEmbryo();
+    root.add(model);
+
+    new GLTFLoader().load(
+      "models/embryo.glb",
+      (gltf) => {
+        root.remove(model);
+        model = fitLoadedModel(gltf.scene);
+        root.add(model);
+        viewer.className = "viewer ready";
+        status.textContent = "3D готово";
+      },
+      undefined,
+      () => {
+        viewer.className = "viewer fallback";
+        status.textContent = "Fallback 3D";
+      }
+    );
+
+    function resize() {
+      const { width, height } = wrap.getBoundingClientRect();
+      const aspect = width / Math.max(1, height);
+      const frustum = aspect < 0.9 ? 2.05 : 1.88;
+      camera.left = -frustum * aspect;
+      camera.right = frustum * aspect;
+      camera.top = frustum;
+      camera.bottom = -frustum;
+      camera.updateProjectionMatrix();
+      renderer.setSize(Math.max(1, width), Math.max(1, height), false);
+    }
+
+    new ResizeObserver(resize).observe(wrap);
+    resize();
+
+    let frame = 0;
+    function animate(time) {
+      frame = requestAnimationFrame(animate);
+      const t = time * 0.001;
+      root.rotation.set(Math.sin(t * 0.55) * 0.05, t * 0.24 + 0.35, -0.08);
+      root.position.set(0.02, 0.04 + Math.sin(t * 0.8) * 0.022, 0);
+      root.scale.setScalar(0.96 + Math.sin(t * 0.65) * 0.012);
+      pulse.intensity = 0.7 + Math.sin(t * 1.2) * 0.22;
+      const color = new Color(Math.sin(t * 0.7) > 0 ? 0xbd6875 : 0xa85763);
+      vesselItems.forEach(({ glow, mesh }, index) => {
+        const opacity = 0.44 + Math.sin(t * 1.1 + index) * 0.08;
+        mesh.material.opacity = opacity;
+        mesh.material.color.copy(color);
+        glow.material.opacity = 0.07 + Math.sin(t * 1.2 + index) * 0.025;
+      });
+      renderer.render(scene, camera);
+    }
+
+    animate(0);
+
+    window.addEventListener("pagehide", () => {
+      cancelAnimationFrame(frame);
+      renderer.dispose();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,610 @@
+patient_id,mother_age_years,parity,gravida,anc_visits,admission_reason,gestational_age_weeks,delivery_mode,baby_condition,baby_sex,birth_weight_grams,apgar_score,high_risk
+P001,30,1,2,4,LP,38,NVD,Live,Male,2500,9,No
+P002,22,1,1,4,LP,39,NVD,Live,Female,3500,10,No
+P003,20,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P004,23,0,1,3,LP,38,NVD,Fresh Stillbirth,Female,3000,,Yes
+P005,22,1,2,4,LP,38,NVD,Live,Female,3000,10,No
+P006,28,0,1,3,LP,39,NVD,Live,Female,2900,10,Yes
+P007,34,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P008,19,1,2,4,LP,39,NVD,Live,Female,2610,9,No
+P009,25,1,2,3,Other,39,NVD,Live,Female,3000,7,Yes
+P010,21,1,2,3,LP,39,NVD,Live,Female,2600,8,Yes
+P011,19,1,2,3,LP,39,NVD,Live,Male,2400,8,Yes
+P012,21,1,2,4,LP,40,NVD,Live,Male,3000,10,No
+P013,22,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P014,20,1,2,3,LP,40,Unknown,Not Recorded,Unknown,,,Yes
+P015,30,1,2,3,LP,39,NVD,Live,Female,3010,10,Yes
+P016,18,0,1,3,LP,39,NVD,Live,Male,3200,10,Yes
+P017,28,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P018,16,0,1,4,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P019,30,2,3,4,LP,38,NVD,Live,Female,3000,9,No
+P020,21,2,3,3,LP,39,NVD,Live,Male,3500,9,Yes
+P021,32,0,1,2,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P022,19,0,1,3,LP,39,NVD,Live,Male,2500,9,Yes
+P023,35,3,4,4,LP,40,Unknown,Not Recorded,Unknown,,,No
+P024,30,3,3,2,LP,39,NVD,Live,Male,3500,9,Yes
+P025,28,2,1,3,LP,40,NVD,Live,Female,2700,10,Yes
+P026,19,0,1,3,LP,39,NVD,Live,Female,3000,9,Yes
+P027,24,1,2,4,LP,39,NVD,Live,Female,2300,7,No
+P028,19,0,1,3,LP,36,NVD,Live,Male,2500,6,Yes
+P029,18,0,1,2,LP,38,NVD,Live,Female,3000,10,Yes
+P030,20,0,1,4,Other,39,NVD,Not Recorded,Unknown,,,No
+P031,26,1,2,4,LP,39,NVD,Live,Male,2900,9,No
+P032,19,1,2,3,LP,39,NVD,Live,Female,3000,10,Yes
+P033,18,0,1,2,LP,39,NVD,Live,Female,3000,9,Yes
+P034,28,0,1,3,LP,39,NVD,Live,Female,3400,10,Yes
+P035,19,0,1,4,LP,39,NVD,Live,Male,3200,10,No
+P036,22,2,4,4,LP,39,NVD,Live,Female,2400,10,No
+P037,25,3,4,4,LP,39,NVD,Live,Female,3500,9,No
+P038,24,1,2,2,Other,40,NVD,Live,Female,3700,9,Yes
+P039,25,1,4,4,Other,39,NVD,Live,Female,2400,10,No
+P040,30,3,4,4,LP,39,NVD,Live,Female,2200,9,No
+P041,30,1,2,4,LP,37,NVD,Live,Female,2800,9,No
+P042,34,4,5,2,LP,40,NVD,Live,Female,2800,9,Yes
+P043,20,0,2,4,LP,39,NVD,Live,Male,2700,4,No
+P044,19,0,1,3,LP,40,NVD,Live,Male,2300,9,Yes
+P045,30,2,3,3,LP,39,NVD,Live,Female,2700,9,Yes
+P046,25,2,2,3,LP,39,NVD,Live,Male,2800,9,Yes
+P047,18,0,1,3,Other,40,NVD,Live,Female,3400,10,Yes
+P048,19,0,1,3,Other,38,NVD,Live,Male,2600,10,Yes
+P049,40,3,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P050,30,2,3,3,LP,40,NVD,Live,Female,2900,8,Yes
+P051,30,0,1,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P052,25,0,1,3,Other,38,NVD,Live,Male,2900,9,Yes
+P053,20,0,1,3,Other,39,NVD,Live,Male,2800,9,Yes
+P054,23,1,1,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P055,22,1,2,3,Other,38,NVD,Live,Male,4000,8,Yes
+P056,20,2,5,4,LP,39,NVD,Live,Female,3100,10,No
+P057,21,0,1,3,LP,40,Unknown,Not Recorded,Unknown,,,Yes
+P058,32,3,4,2,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P059,21,0,1,3,LP,40,NVD,Live,Male,2900,10,Yes
+P060,20,0,1,4,LP,39,NVD,Live,Female,3000,9,No
+P061,19,0,1,4,LP,38,NVD,Live,Female,2900,9,No
+P062,20,0,1,3,LP,38,NVD,Live,Male,2200,8,Yes
+P063,21,0,1,4,LP,38,NVD,Live,Female,2600,9,No
+P064,25,3,4,4,LP,39,NVD,Live,Female,2400,9,No
+P065,26,3,4,4,LP,38,Unknown,Not Recorded,Unknown,,,No
+P066,22,1,2,4,Other,40,NVD,Live,Male,2800,9,No
+P067,22,0,1,3,Other,39,NVD,Live,Female,2800,9,Yes
+P068,30,3,3,2,Other,39,NVD,Live,Male,2800,9,Yes
+P069,29,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P070,22,1,2,3,LP,22,NVD,Live,Female,2400,9,Yes
+P071,27,2,2,4,Other,39,NVD,Live,Female,2300,8,No
+P072,22,2,2,4,Other,39,NVD,Live,Female,2200,8,No
+P073,18,0,1,3,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P074,26,1,2,4,Other,39,Unknown,Not Recorded,Unknown,,,No
+P075,23,0,1,5,Other,38,Unknown,Not Recorded,Unknown,,,No
+P076,19,0,1,3,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P077,23,0,2,4,LP,39,NVD,Live,Male,2500,8,No
+P078,30,3,3,4,LP,39,NVD,Live,Female,3100,8,No
+P079,18,1,1,4,LP,38,NVD,Live,Female,,10,No
+P080,35,3,3,4,LP,39,NVD,Live,Male,3500,9,No
+P081,18,1,1,4,LP,39,NVD,Live,Male,2500,9,No
+P082,22,2,2,4,LP,38,NVD,Live,Female,2700,10,No
+P083,18,0,1,3,Other,39,NVD,Live,Male,2500,8,Yes
+P084,26,0,1,2,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P085,18,0,1,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P086,18,1,1,4,LP,39,NVD,Live,Male,3000,9,No
+P087,23,2,2,4,LP,39,NVD,Live,Female,3500,9,No
+P088,22,1,2,3,Other,39,NVD,Live,Male,4200,9,Yes
+P089,35,2,3,4,Other,39,Unknown,Not Recorded,Unknown,,,No
+P090,18,0,1,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P091,27,1,2,3,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P092,30,0,1,3,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P093,18,2,3,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P094,35,3,4,3,Other,39,NVD,Live,Male,2900,10,Yes
+P095,35,2,3,4,LP,38,NVD,Live,Female,3100,10,No
+P096,22,1,2,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P097,26,1,2,4,Other,38,Unknown,Not Recorded,Unknown,,,No
+P098,20,0,1,3,Other,37,NVD,Fresh Stillbirth,Male,3000,,Yes
+P099,17,0,1,4,Other,39,NVD,Live,Female,2700,,Yes
+P100,26,0,1,3,Other,40,Unknown,Not Recorded,Unknown,,,Yes
+P101,18,1,2,4,Other,39,NVD,Live,Unknown,2500,,No
+P102,25,1,2,3,LP,38,NVD,Live,Unknown,3000,,Yes
+P103,28,1,2,4,LP,38,Unknown,Not Recorded,Unknown,,,No
+P104,34,4,4,4,LP,38,NVD,Live,Unknown,3100,,No
+P105,28,1,2,5,Other,39,NVD,Live,Unknown,3100,,No
+P106,19,1,2,4,LP,39,NVD,Live,Female,,10,No
+P107,20,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P108,18,0,1,4,LP,38,NVD,Live,Female,,8,No
+P109,18,1,2,2,LP,38,NVD,Live,Male,,9,Yes
+P110,35,3,3,4,LP,39,NVD,Live,Female,,9,No
+P111,25,1,2,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P112,22,0,1,4,Other,38,Unknown,Not Recorded,Unknown,,,No
+P113,22,2,3,5,LP,38,NVD,Live,Female,,8,No
+P114,28,3,2,4,LP,28,NVD,Live,Male,,7,Yes
+P115,30,3,3,3,LP,38,NVD,Live,Female,,8,Yes
+P116,26,1,2,3,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P117,26,0,1,4,Other,39,Unknown,Not Recorded,Unknown,,,No
+P118,19,0,1,2,Other,38,NVD,Live,Male,,10,Yes
+P119,35,2,3,3,Other,39,NVD,Live,Male,,10,Yes
+P120,22,0,1,4,Other,38,NVD,Live,Female,,9,No
+P121,25,0,1,3,Other,39,NVD,Live,Female,2500,9,Yes
+P122,35,2,3,4,Other,40,Unknown,Not Recorded,Unknown,,,No
+P123,22,1,2,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P124,18,0,1,4,Other,37,Unknown,Not Recorded,Unknown,,,No
+P125,22,1,1,4,LP,39,NVD,Live,Male,2800,10,No
+P126,27,3,3,4,Other,39,NVD,Live,Male,2900,10,No
+P127,26,1,2,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P128,35,2,3,2,LP,38,NVD,Live,Female,3000,8,Yes
+P129,20,0,1,2,LP,37,Unknown,Not Recorded,Unknown,,,Yes
+P130,25,1,2,2,LP,38,NVD,Live,Male,3300,,Yes
+P131,26,0,1,3,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P132,20,0,1,4,Other,38,NVD,Live,Male,3200,9,No
+P133,28,0,1,3,Other,38,NVD,Live,Male,2400,9,Yes
+P134,22,1,2,2,Other,38,NVD,Live,Male,2100,10,Yes
+P135,25,2,3,3,Other,39,NVD,Live,Male,2900,10,Yes
+P136,25,2,2,2,Other,38,NVD,Live,Female,3000,8,Yes
+P137,25,2,2,2,Other,38,NVD,Live,Female,2500,9,Yes
+P138,18,0,1,2,Other,38,NVD,Live,Female,3300,8,Yes
+P139,30,2,3,3,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P140,29,3,4,2,Other,39,NVD,Live,Male,2300,8,Yes
+P141,25,1,2,3,LP,38,NVD,Live,Male,3100,10,Yes
+P142,26,0,1,3,LP,38,NVD,Live,Female,2600,9,Yes
+P143,27,1,2,4,LP,38,NVD,Live,Male,4200,9,No
+P144,28,1,3,4,Other,40,NVD,Live,Male,2600,9,No
+P145,35,1,2,4,LP,38,Unknown,Not Recorded,Unknown,,,No
+P146,21,1,2,4,LP,38,NVD,Live,Male,,8,No
+P147,29,2,3,3,Other,40,NVD,Live,Male,,9,Yes
+P148,30,2,4,4,Other,39,NVD,Live,Male,,9,No
+P149,19,1,1,4,Other,40,NVD,Live,Female,,10,No
+P150,18,1,1,4,Other,39,NVD,Live,Female,,9,No
+P151,25,1,2,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P152,22,0,1,4,Other,38,Unknown,Not Recorded,Unknown,,,No
+P153,26,2,3,3,Other,38,NVD,Live,Female,3100,10,Yes
+P154,38,2,2,3,Other,39,NVD,Live,Male,2900,8,Yes
+P155,24,0,1,2,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P156,21,0,1,3,Other,39,NVD,Live,Female,2900,10,Yes
+P157,20,0,2,4,LP,39,NVD,Live,Male,3300,8,No
+P158,30,1,2,4,LP,39,NVD,Live,Male,3000,10,No
+P159,19,0,1,4,LP,39,NVD,Live,Female,2700,8,No
+P160,35,2,3,3,LP,38,NVD,Live,Female,2900,8,Yes
+P161,30,3,4,3,LP,38,NVD,Live,Female,2700,8,Yes
+P162,22,1,2,3,LP,38,NVD,Live,Male,3500,7,Yes
+P163,18,1,2,2,LP,37,NVD,Live,Male,3100,10,Yes
+P164,28,0,1,3,LP,39,NVD,Live,Female,3300,10,Yes
+P165,22,1,2,2,Other,39,NVD,Live,Male,2600,8,Yes
+P166,22,1,2,4,LP,39,NVD,Live,Female,3100,10,No
+P167,20,0,1,3,LP,38,NVD,Live,Male,2900,10,Yes
+P168,25,2,2,4,LP,39,NVD,Live,Female,3000,10,No
+P169,20,1,2,3,LP,39,NVD,Live,Male,2700,10,Yes
+P170,22,1,2,4,LP,38,NVD,Live,Male,3000,10,No
+P171,20,0,1,3,LP,38,NVD,Live,Male,3200,10,Yes
+P172,25,1,2,2,Other,37,NVD,Live,Female,2800,8,Yes
+P173,30,2,3,4,LP,38,NVD,Live,Male,3600,10,No
+P174,30,1,2,3,LP,39,NVD,Live,Female,3700,10,Yes
+P175,23,0,1,4,LP,40,NVD,Live,Female,2900,10,No
+P176,20,1,0,2,LP,39,NVD,Live,Female,3100,10,Yes
+P177,20,1,0,3,LP,38,NVD,Live,Male,2700,9,Yes
+P178,22,2,2,5,Other,39,NVD,Live,Female,2800,9,No
+P179,22,1,2,3,Other,37,NVD,Live,Male,3700,10,Yes
+P180,25,2,3,4,Other,39,NVD,Live,Male,3300,10,No
+P181,30,2,3,3,LP,36,NVD,Live,Female,2600,7,Yes
+P182,28,1,2,3,LP,37,NVD,Live,Male,2900,8,Yes
+P183,30,2,4,3,Other,38,NVD,Live,Female,3600,8,Yes
+P184,28,0,1,3,LP,38,NVD,Live,Male,2600,8,Yes
+P185,28,2,3,3,LP,37,NVD,Live,Female,3000,10,Yes
+P186,16,0,1,3,LP,38,NVD,Live,Female,2600,10,Yes
+P187,30,3,4,3,Other,38,Unknown,Live,Female,2500,8,Yes
+P188,30,2,3,4,Other,39,NVD,Live,Female,3200,9,No
+P189,19,0,1,3,Other,40,NVD,Live,Male,2100,10,Yes
+P190,22,0,1,2,Other,36,NVD,Live,Female,2400,6,Yes
+P191,20,0,1,3,Other,39,NVD,Live,Male,2700,7,Yes
+P192,20,0,1,3,Other,38,NVD,Live,Male,2900,10,Yes
+P193,30,2,3,3,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P194,20,0,1,2,Other,39,NVD,Live,Female,2000,8,Yes
+P195,22,0,1,3,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P196,30,1,2,3,Other,39,NVD,Live,Female,2900,8,Yes
+P197,32,3,4,3,Other,39,NVD,Live,Male,3600,8,Yes
+P198,35,2,3,3,Other,39,NVD,Live,Female,3000,9,Yes
+P199,19,1,2,3,LP,39,Unknown,Live,Male,3000,9,Yes
+P200,19,1,1,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P201,18,0,2,3,LP,37,NVD,Live,Female,2800,7,Yes
+P202,35,2,3,3,LP,38,NVD,Live,Male,2600,10,Yes
+P203,24,1,2,3,LP,38,Unknown,Not Recorded,Unknown,,,Yes
+P204,25,2,3,3,LP,37,NVD,Live,Male,2800,7,Yes
+P205,18,0,1,2,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P206,19,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P207,25,1,2,4,LP,38,NVD,Live,Female,2800,8,No
+P208,23,1,2,4,LP,38,NVD,Live,Male,,10,No
+P209,19,0,1,4,LP,38,NVD,Live,Male,2900,9,No
+P210,29,0,1,4,LP,40,NVD,Live,Female,3200,7,No
+P211,27,0,2,3,LP,38,NVD,Live,Male,3100,8,Yes
+P212,23,1,2,3,Other,38,NVD,Live,Male,2600,8,Yes
+P213,19,0,1,3,Other,38,NVD,Live,Male,3000,7,Yes
+P214,20,1,1,4,Other,38,Unknown,Not Recorded,Unknown,,,No
+P215,25,1,2,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P216,27,1,3,3,Other,39,NVD,Live,Male,2400,7,Yes
+P217,24,3,3,4,LP,39,NVD,Live,Male,3200,7,No
+P218,22,0,1,3,Other,38,NVD,Live,Female,3000,8,Yes
+P219,30,1,2,3,Other,38,NVD,Live,Female,2600,7,Yes
+P220,18,0,1,4,LP,39,NVD,Live,Male,3200,7,No
+P221,28,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P222,19,0,1,4,Other,38,Unknown,Not Recorded,Unknown,,,No
+P223,25,2,3,3,LP,37,NVD,Live,Male,3000,9,Yes
+P224,25,2,2,4,Other,38,Unknown,Not Recorded,Unknown,,,No
+P225,18,1,1,3,Other,38,NVD,Fresh Stillbirth,Male,2500,9,Yes
+P226,25,2,3,4,LP,39,NVD,Live,Male,3000,9,No
+P227,22,1,2,4,Other,40,NVD,Live,Male,2800,9,No
+P228,22,0,1,3,Other,39,NVD,Live,Female,2800,9,Yes
+P229,30,3,3,2,Other,39,NVD,Live,Male,2800,9,Yes
+P230,19,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P231,22,1,2,3,LP,39,NVD,Live,Female,2400,9,Yes
+P232,18,1,1,3,LP,38,NVD,Not Recorded,Unknown,,,Yes
+P233,30,2,3,3,LP,39,NVD,Live,Female,3100,,Yes
+P234,22,2,3,3,Other,39,NVD,Live,Male,3500,,Yes
+P235,48,0,1,3,Other,39,NVD,Live,Female,3100,,Yes
+P236,25,2,3,4,Other,40,NVD,Live,Male,3000,,No
+P237,23,0,1,3,LP,40,Unknown,Not Recorded,Unknown,,,Yes
+P238,22,1,2,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P239,26,2,3,3,Other,40,NVD,Live,Male,3000,9,Yes
+P240,28,1,2,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P241,22,2,3,3,LP,38,NVD,Live,Male,3100,9,Yes
+P242,30,3,4,3,Other,39,NVD,Live,Female,2500,9,Yes
+P243,30,2,3,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P244,18,3,4,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P245,18,0,1,3,Other,40,NVD,Live,Female,3000,9,Yes
+P246,20,0,1,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P247,25,0,1,2,LP,39,NVD,Live,Male,3000,10,Yes
+P248,25,1,1,2,Other,39,NVD,Live,Male,3800,9,Yes
+P249,35,3,4,5,LP,37,NVD,Live,Male,3100,10,No
+P250,22,0,1,2,LP,38,NVD,Live,Male,2800,10,Yes
+P251,30,1,2,4,LP,38,NVD,Live,Male,2500,,No
+P252,22,1,1,4,LP,39,NVD,Live,Female,3500,,No
+P253,20,0,1,3,LP,39,C/S,Not Recorded,Unknown,,,Yes
+P254,23,0,1,3,LP,38,NVD,Not Recorded,Female,3000,,Yes
+P255,22,1,2,4,LP,38,NVD,Live,Male,3000,,No
+P256,20,1,2,4,PE,39,Unknown,Not Recorded,Unknown,,,No
+P257,27,4,2,4,PE,40,NVD,Not Recorded,Female,2900,,No
+P258,21,1,0,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P259,20,1,2,3,LP,40,NVD,Live,Male,3400,9,Yes
+P260,40,2,3,4,LP,38,NVD,Live,Unknown,3000,8,Yes
+P261,30,0,1,2,PE,39,Unknown,Not Recorded,Unknown,,,Yes
+P262,23,0,1,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P263,35,2,3,4,Other,40,Unknown,Not Recorded,Unknown,,,No
+P264,23,1,2,4,LP,39,NVD,Live,Female,3900,9,No
+P265,19,0,1,3,PE,39,Unknown,Not Recorded,Unknown,,,Yes
+P266,24,3,2,3,LP,38,NVD,Live,Female,3300,8,Yes
+P267,26,3,2,4,PE,38,NVD,Not Recorded,Unknown,,,No
+P268,20,0,0,4,PE,38,NVD,Live,Male,2500,9,No
+P269,25,1,2,3,PE,39,Unknown,Not Recorded,Unknown,,,Yes
+P270,19,0,1,2,PE,39,NVD,Live,Female,2600,7,Yes
+P271,20,0,1,3,PE,38,NVD,Not Recorded,Male,2900,7,Yes
+P272,32,3,4,4,Other,38,NVD,Not Recorded,Female,,,No
+P273,23,1,2,3,PE,39,NVD,Live,Female,2500,9,Yes
+P274,20,1,2,3,PE,39,Unknown,Not Recorded,Unknown,,,Yes
+P275,21,0,1,2,LP,32,NVD,Live,Multiple_Mixed,,6,Yes
+P276,25,1,2,3,PE,38,NVD,Live,Male,3300,9,Yes
+P277,28,2,2,3,PE,38,NVD,Live,Female,2600,7,Yes
+P278,25,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P279,19,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P280,30,1,2,3,PE,39,NVD,Not Recorded,Unknown,,,Yes
+P281,21,0,1,4,PE,39,NVD,Live,Female,3500,10,No
+P282,33,2,3,4,PE,40,NVD,Live,Female,3100,10,No
+P283,30,3,4,3,PE,39,Unknown,Not Recorded,Unknown,,,Yes
+P284,25,1,3,3,Other,39,NVD,Live,Female,1900,,Yes
+P285,28,1,1,4,PE,39,NVD,Live,Female,3500,,No
+P286,20,0,1,4,PE,39,NVD,Live,Female,2800,,No
+P287,29,1,2,4,PE,39,NVD,Live,Male,3000,10,No
+P288,20,0,1,4,PE,39,Unknown,Not Recorded,Unknown,,,No
+P289,25,1,2,4,LP,39,NVD,Live,Male,3000,10,No
+P290,35,2,3,4,LP,39,Unknown,Not Recorded,Unknown,,,No
+P291,20,0,1,4,PE,38,NVD,Live,Male,3000,9,No
+P292,21,0,1,3,PE,40,NVD,Live,Female,2100,8,Yes
+P293,20,0,1,4,PE,40,NVD,Live,Female,2600,10,No
+P294,21,1,2,5,PE,39,NVD,Live,Female,2600,10,No
+P295,20,0,1,4,PE,39,NVD,Live,Female,2900,5,No
+P296,30,2,3,4,Other,39,Unknown,Not Recorded,Unknown,,,No
+P297,20,1,1,3,PE,39,NVD,Live,Female,2900,10,Yes
+P298,25,1,2,2,PE,39,C/S,Not Recorded,Unknown,,,Yes
+P299,18,0,0,3,PE,40,NVD,Live,Male,3500,10,Yes
+P300,18,0,1,4,LP,39,NVD,Live,Female,3200,10,No
+P301,25,0,1,2,LP,40,C/S,Live,Female,2500,8,Yes
+P302,18,0,1,3,LP,39,C/S,Not Recorded,Unknown,,,Yes
+P303,28,1,2,4,LP,39,C/S,Not Recorded,Unknown,,,No
+P304,25,2,1,3,LP,39,NVD,Live,Female,2900,9,Yes
+P305,24,2,1,3,LP,39,NVD,Live,Male,3000,10,Yes
+P306,19,0,0,3,LP,37,NVD,Not Recorded,Unknown,,,Yes
+P307,25,3,2,4,LP,39,NVD,Live,Male,3500,9,No
+P308,21,2,3,4,PE,38,Unknown,Not Recorded,Unknown,,,No
+P309,25,0,1,3,PE,40,Unknown,Not Recorded,Unknown,,,Yes
+P310,18,0,1,2,LP,39,NVD,Live,Female,3000,,Yes
+P311,20,1,2,5,LP,39,Unknown,Live,Male,2500,,No
+P312,22,1,2,4,LP,38,NVD,Live,Female,3100,,No
+P313,18,1,2,4,LP,39,NVD,Live,Female,2500,,No
+P314,20,0,0,3,PE,33,NVD,Live,Male,3000,,Yes
+P315,25,0,1,4,LP,38,NVD,Live,Male,2500,,No
+P316,30,2,3,2,PE,39,NVD,Live,Female,3000,,Yes
+P317,19,0,1,3,LP,38,NVD,Live,Male,2900,,Yes
+P318,19,0,1,3,LP,40,NVD,Live,Female,3000,10,Yes
+P319,22,0,1,2,PE,39,NVD,Live,Male,3200,9,Yes
+P320,18,0,1,4,PE,39,NVD,Live,Female,3200,9,No
+P321,18,0,1,4,PE,39,NVD,Live,Female,3200,9,No
+P322,20,1,2,4,PE,39,NVD,Live,Female,2700,10,No
+P323,20,1,2,4,PE,40,NVD,Live,Male,2800,10,No
+P324,22,0,1,3,PE,39,NVD,Live,Male,2700,9,Yes
+P325,21,0,1,2,PE,39,NVD,Live,Female,2500,10,Yes
+P326,24,3,4,3,LP,39,C/S,Live,Male,3600,9,Yes
+P327,35,3,4,4,LP,39,NVD,Live,Female,2700,10,No
+P328,19,0,1,3,LP,39,NVD,Live,Unknown,2500,10,Yes
+P329,25,2,3,3,LP,38,NVD,Live,Male,3500,10,Yes
+P330,22,2,3,4,LP,39,NVD,Live,Female,3000,10,No
+P331,22,0,1,4,LP,38,NVD,Live,Female,2300,9,No
+P332,19,0,1,3,LP,39,NVD,Live,Male,2500,9,Yes
+P333,35,2,3,3,LP,39,NVD,Live,Male,3500,9,Yes
+P334,30,0,1,2,PE,39,NVD,Live,Female,2500,9,Yes
+P335,26,1,2,3,LP,39,NVD,Live,Male,2500,9,Yes
+P336,22,1,2,3,LP,38,Unknown,Not Recorded,Unknown,,,Yes
+P337,19,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P338,20,0,1,2,PE,40,Unknown,Not Recorded,Unknown,,,Yes
+P339,24,1,3,3,PE,40,Unknown,Not Recorded,Unknown,,,Yes
+P340,25,0,1,3,LP,39,NVD,Live,Female,2500,8,Yes
+P341,25,2,3,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P342,20,0,1,2,Other,40,Unknown,Not Recorded,Unknown,,,Yes
+P343,33,1,2,3,LP,39,NVD,Live,Female,2900,10,Yes
+P344,30,3,4,4,LP,39,NVD,Live,Male,2300,9,No
+P345,25,2,3,3,LP,38,NVD,Live,Male,2900,8,Yes
+P346,20,0,1,4,LP,39,NVD,Live,Male,3000,9,No
+P347,24,2,2,3,LP,38,NVD,Live,Female,2900,8,Yes
+P348,32,4,5,2,LP,36,Unknown,Not Recorded,Unknown,,,Yes
+P349,25,0,1,3,PE,40,Unknown,Not Recorded,Unknown,,,Yes
+P350,19,0,1,3,LP,39,NVD,Live,Male,3000,8,Yes
+P351,28,0,1,4,LP,40,Unknown,Not Recorded,Unknown,,,No
+P352,22,1,2,3,PE,39,NVD,Live,Male,2800,9,Yes
+P353,25,0,1,3,LP,39,NVD,Live,Male,3000,9,Yes
+P354,25,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P355,24,0,1,4,PE,39,NVD,Live,Male,3800,9,No
+P356,21,0,1,4,LP,38,NVD,Live,Female,3100,8,No
+P357,18,0,1,3,PE,39,NVD,Live,Female,2800,10,Yes
+P358,19,0,1,4,PE,40,Unknown,Not Recorded,Unknown,,,No
+P359,23,0,1,3,PE,40,Unknown,Not Recorded,Unknown,,,Yes
+P360,30,2,3,4,LP,39,NVD,Live,Female,3200,10,No
+P361,21,0,1,1,LP,39,NVD,Not Recorded,Unknown,,,Yes
+P362,22,2,3,3,LP,39,NVD,Live,Male,3000,,Yes
+P363,21,1,2,4,PE,39,NVD,Live,Male,2800,,No
+P364,20,0,1,1,PE,39,NVD,Not Recorded,Female,3000,,Yes
+P365,30,2,3,3,PE,39,NVD,Live,Female,3700,,Yes
+P366,35,3,0,0,PE,39,NVD,Not Recorded,Unknown,,,Yes
+P367,25,0,1,2,PE,39,Unknown,Not Recorded,Unknown,,,Yes
+P368,35,3,4,4,PE,40,Unknown,Not Recorded,Unknown,,,No
+P369,20,0,1,2,LP,39,NVD,Live,Male,3100,9,Yes
+P370,21,1,0,4,LP,39,NVD,Live,Male,3200,9,No
+P371,32,2,3,2,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P372,25,0,1,3,PE,39,Unknown,Not Recorded,Unknown,,,Yes
+P373,25,3,4,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P374,18,2,4,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P375,20,2,3,3,Other,38,Unknown,Not Recorded,Unknown,,,Yes
+P376,20,0,1,3,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P377,18,1,2,4,LP,39,NVD,Live,Male,3400,8,No
+P378,20,0,1,4,Other,39,NVD,Not Recorded,Male,,,No
+P379,23,0,1,3,PE,39,Unknown,Not Recorded,Unknown,,,Yes
+P380,22,0,1,3,PE,38,Unknown,Not Recorded,Unknown,,,Yes
+P381,30,1,2,4,PE,39,NVD,Live,Male,3300,8,No
+P382,25,0,1,3,PE,39,NVD,Live,Male,3000,9,Yes
+P383,25,1,2,3,LP,39,NVD,Live,Male,3000,9,Yes
+P384,35,1,2,4,LP,39,NVD,Live,Male,3200,9,No
+P385,25,1,2,3,LP,38,NVD,Live,Female,2500,10,Yes
+P386,26,1,2,4,PE,39,NVD,Live,Male,4200,9,No
+P387,35,1,2,3,PE,39,NVD,Live,Male,3200,7,Yes
+P388,25,0,1,3,PE,38,Unknown,Not Recorded,Unknown,,,Yes
+P389,26,1,2,4,Other,37,Unknown,Not Recorded,Unknown,,,No
+P390,30,2,3,4,Other,39,Unknown,Not Recorded,Unknown,,,No
+P391,26,2,3,4,PE,38,NVD,Live,Male,3500,10,No
+P392,30,2,3,3,LP,38,NVD,Live,Female,2600,9,Yes
+P393,18,1,2,4,LP,39,NVD,Live,Male,2600,10,No
+P394,30,1,3,3,PE,39,NVD,Live,Male,3000,9,Yes
+P395,23,2,3,2,Other,39,NVD,Live,Female,3000,9,Yes
+P396,30,2,3,4,PE,39,NVD,Live,Female,3000,8,No
+P397,24,1,1,4,Other,39,NVD,Live,Male,,9,No
+P398,20,2,3,4,LP,39,NVD,Live,Male,,8,No
+P399,30,2,3,4,LP,39,NVD,Live,Female,,9,No
+P400,16,0,1,4,LP,38,NVD,Live,Female,,9,Yes
+P401,25,3,4,3,LP,40,NVD,Live,Female,,9,Yes
+P402,16,0,1,2,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P403,35,2,3,3,LP,39,NVD,Live,Male,3400,10,Yes
+P404,18,0,1,4,LP,40,Unknown,Not Recorded,Unknown,,,No
+P405,28,3,4,3,LP,39,NVD,Live,Male,3000,8,Yes
+P406,38,3,4,4,LP,40,Unknown,Not Recorded,Unknown,,,Yes
+P407,23,0,1,3,PE,39,Unknown,Not Recorded,Unknown,,,Yes
+P408,20,1,2,2,LP,37,NVD,Live,Female,2500,9,Yes
+P409,30,2,3,3,LP,39,NVD,Not Recorded,Unknown,,,Yes
+P410,32,2,3,4,PE,40,NVD,Live,Female,2500,9,No
+P411,37,3,4,3,LP,40,Unknown,Not Recorded,Unknown,,,Yes
+P412,20,0,1,3,PE,39,Unknown,Live,Unknown,,,Yes
+P413,21,0,1,3,LP,40,NVD,Live,Female,3500,8,Yes
+P414,20,0,1,3,LP,40,NVD,Live,Male,2500,9,Yes
+P415,18,1,2,4,PE,40,Unknown,Not Recorded,Unknown,,,No
+P416,32,2,3,4,PE,39,NVD,Live,Male,2500,9,No
+P417,25,2,3,3,LP,36,NVD,Live,Female,2500,9,Yes
+P418,32,3,4,3,LP,36,Unknown,Not Recorded,Unknown,,,Yes
+P419,27,1,2,3,LP,39,NVD,Live,Female,3000,9,Yes
+P420,25,3,4,3,LP,38,NVD,Live,Male,2000,9,Yes
+P421,22,1,2,4,LP,38,NVD,Live,Male,3000,9,No
+P422,22,1,2,3,LP,39,NVD,Live,Male,2500,10,Yes
+P423,19,1,2,4,PE,39,Unknown,Not Recorded,Unknown,,,No
+P424,22,1,2,4,PE,38,NVD,Live,Female,3500,10,No
+P425,33,4,3,4,LP,39,NVD,Live,Female,3300,10,No
+P426,22,1,2,1,LP,38,NVD,Live,Male,3500,8,Yes
+P427,19,1,2,4,LP,39,NVD,Live,Male,2900,8,No
+P428,19,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P429,32,3,4,3,LP,39,NVD,Live,Female,2900,9,Yes
+P430,21,2,3,4,LP,38,Unknown,Live,Female,3300,9,No
+P431,30,3,4,4,LP,39,NVD,Live,Female,2600,8,No
+P432,24,1,0,2,Other,39,Unknown,Not Recorded,Unknown,,,Yes
+P433,18,1,0,3,LP,38,NVD,Live,Male,3000,9,Yes
+P434,22,1,2,4,Other,39,Unknown,Not Recorded,Unknown,,,No
+P435,25,2,1,2,LP,40,NVD,Live,Female,3000,9,Yes
+P436,24,1,2,4,LP,39,NVD,Live,Male,2800,9,No
+P437,18,0,1,5,PE,38,NVD,Live,Female,2900,9,No
+P438,45,1,2,4,PE,40,NVD,Not Recorded,Unknown,,,Yes
+P439,25,1,2,3,PE,38,NVD,Live,Female,1900,9,Yes
+P440,23,2,3,3,PE,38,NVD,Live,Male,3400,8,Yes
+P441,20,1,2,2,PE,39,NVD,Live,Female,3100,9,Yes
+P442,27,3,0,4,PE,39,Unknown,Not Recorded,Unknown,,,No
+P443,24,0,3,3,PE,38,Unknown,Not Recorded,Unknown,,,Yes
+P444,23,0,1,4,LP,40,NVD,Live,Male,2400,9,No
+P445,20,0,1,4,LP,39,Unknown,Not Recorded,Unknown,,,No
+P446,19,1,2,5,PE,38,NVD,Live,Female,2800,9,No
+P447,19,1,2,4,LP,39,Unknown,Not Recorded,Unknown,,,No
+P448,23,1,2,3,LP,38,Unknown,Not Recorded,Unknown,,,Yes
+P449,29,1,2,4,LP,39,Unknown,Live,Male,2800,9,No
+P450,22,2,2,4,LP,39,Unknown,Not Recorded,Unknown,,,No
+P451,22,1,2,4,LP,38,Unknown,Live,Female,3100,8,No
+P452,29,1,2,3,LP,28,Unknown,Not Recorded,Unknown,,,Yes
+P453,20,2,3,4,LP,39,Unknown,Not Recorded,Unknown,,,No
+P454,18,0,1,3,LP,40,NVD,Live,Female,3000,2,Yes
+P455,23,1,2,3,LP,38,Unknown,Live,Male,2900,,Yes
+P456,18,1,2,3,LP,38,C/S,Live,Female,2950,,Yes
+P457,25,1,2,3,LP,38,C/S,Live,Male,2500,10,Yes
+P458,18,0,1,3,LP,38,Unknown,Live,Unknown,,,Yes
+P459,25,0,1,3,LP,38,Unknown,Live,Male,2600,10,Yes
+P460,25,0,1,3,LP,38,NVD,Live,Female,2800,10,Yes
+P461,28,3,4,3,LP,38,NVD,Live,Female,3400,8,Yes
+P462,30,1,2,3,LP,38,NVD,Live,Female,2900,8,Yes
+P463,35,3,4,4,LP,39,NVD,Not Recorded,Unknown,,,No
+P464,28,4,4,4,LP,39,NVD,Live,Male,4000,10,No
+P465,20,2,3,4,LP,38,NVD,Live,Male,3400,9,No
+P466,19,0,1,4,LP,39,NVD,Live,Female,2900,10,No
+P467,22,1,2,3,LP,39,NVD,Live,Male,,10,Yes
+P468,32,3,3,4,LP,39,NVD,Live,Male,,9,No
+P469,20,1,1,4,LP,39,NVD,Live,Male,,9,No
+P470,20,0,1,4,LP,39,NVD,Not Recorded,Unknown,,,No
+P471,25,1,2,4,LP,39,NVD,Not Recorded,Unknown,,,No
+P472,18,0,1,4,LP,39,NVD,Live,Male,2600,7,No
+P473,35,3,4,4,LP,39,NVD,Live,Female,2800,9,No
+P474,35,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P475,35,3,5,4,LP,39,NVD,Not Recorded,Unknown,,,No
+P476,19,0,1,4,LP,38,NVD,Live,Male,3000,9,No
+P477,30,4,3,4,LP,39,NVD,Live,Female,3500,9,No
+P478,19,1,2,3,LP,39,NVD,Not Recorded,Unknown,,,Yes
+P479,18,0,1,4,LP,39,NVD,Live,Female,3900,8,No
+P480,20,1,3,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P481,22,1,2,4,Eclampsia,37,Unknown,Not Recorded,Unknown,,,No
+P482,22,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P483,25,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P484,19,0,1,4,LP,39,Unknown,Live,Female,2700,8,No
+P485,18,0,1,4,LP,38,NVD,Not Recorded,Unknown,,,No
+P486,35,0,2,3,LP,39,NVD,Live,Male,3500,6,Yes
+P487,20,1,3,4,LP,38,NVD,Not Recorded,Unknown,,,No
+P488,22,3,2,4,LP,39,Unknown,Not Recorded,Unknown,,,No
+P489,35,3,2,3,LP,39,NVD,Live,Male,3500,9,Yes
+P490,22,1,2,4,LP,32,NVD,Live,Female,1900,9,Yes
+P491,30,2,3,3,LP,38,NVD,Live,Male,3100,10,Yes
+P492,25,0,1,4,LP,39,Unknown,Not Recorded,Unknown,,,No
+P493,20,0,1,3,LP,39,NVD,Live,Female,3000,10,Yes
+P494,25,3,2,4,LP,39,Unknown,Live,Female,2500,9,No
+P495,26,0,1,3,LP,39,Unknown,Live,Female,3200,8,Yes
+P496,22,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P497,25,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P498,22,0,1,3,LP,39,Unknown,Live,Male,2800,9,Yes
+P499,25,0,1,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P500,24,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P501,22,1,3,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P502,21,0,1,3,LP,38,Unknown,Not Recorded,Unknown,,,Yes
+P503,30,1,2,3,LP,38,NVD,Live,Female,2200,7,Yes
+P504,18,0,1,2,LP,38,Unknown,Not Recorded,Unknown,,,Yes
+P505,23,1,2,3,APH,39,NVD,Live,Male,3800,8,Yes
+P506,19,0,1,3,LP,37,NVD,Live,Female,2500,8,Yes
+P507,20,0,1,4,LP,39,NVD,Live,Female,2600,2,No
+P508,19,0,1,4,LP,38,NVD,Live,Female,2200,8,No
+P509,23,2,2,4,LP,39,NVD,Live,Female,2600,8,No
+P510,30,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P511,29,2,2,3,LP,39,NVD,Live,Female,3000,8,Yes
+P512,30,2,3,4,LP,39,Unknown,Not Recorded,Unknown,,,No
+P513,23,0,1,4,LP,37,NVD,Macerated Stillbirth,Male,2700,8,No
+P514,20,0,1,3,LP,38,NVD,Macerated Stillbirth,Female,2900,9,Yes
+P515,19,0,1,4,LP,37,NVD,Macerated Stillbirth,Male,3000,9,No
+P516,16,1,2,3,LP,38,Unknown,Not Recorded,Unknown,,,Yes
+P517,18,0,1,2,Unknown,39,NVD,Live,Male,3100,9,Yes
+P518,25,0,1,3,Unknown,39,NVD,Live,Female,3200,9,Yes
+P519,35,3,4,4,Unknown,39,NVD,Live,Male,3500,9,No
+P520,30,2,2,4,Unknown,39,NVD,Live,Male,3500,8,No
+P521,19,1,1,4,Unknown,39,NVD,Live,Male,3200,7,No
+P522,20,0,1,4,LP,39,NVD,Live,Male,3200,9,No
+P523,19,0,1,4,LP,39,NVD,Live,Female,3300,9,No
+P524,29,1,2,4,LP,40,NVD,Live,Male,3500,9,No
+P525,22,0,1,3,LP,39,NVD,Live,Male,2800,9,Yes
+P526,22,0,1,4,LP,38,NVD,Live,Male,2900,10,No
+P527,20,0,1,2,LP,38,NVD,Live,Male,2800,9,Yes
+P528,20,1,2,3,LP,40,NVD,Live,Female,2900,,Yes
+P529,21,1,2,4,LP,39,NVD,Live,Male,3000,9,No
+P530,19,0,1,2,LP,39,NVD,Live,Male,2500,7,Yes
+P531,40,2,3,3,LP,39,NVD,Live,Female,2800,9,Yes
+P532,20,0,1,2,LP,39,NVD,Live,Female,2600,8,Yes
+P533,19,1,2,3,LP,39,NVD,Live,Male,2900,9,Yes
+P534,28,1,2,2,LP,39,NVD,Live,Female,2500,8,Yes
+P535,30,2,3,4,LP,39,NVD,Live,Female,2600,8,No
+P536,35,4,5,2,LP,39,NVD,Live,Female,2800,9,Yes
+P537,21,1,2,4,LP,40,NVD,Live,Female,3400,9,No
+P538,20,0,1,4,LP,39,NVD,Live,Female,3900,8,No
+P539,20,0,1,2,LP,38,NVD,Live,Male,3000,9,Yes
+P540,32,2,3,2,LP,38,NVD,Live,Female,3500,9,Yes
+P541,18,0,1,3,LP,39,NVD,Live,Male,3500,8,Yes
+P542,20,1,2,2,LP,38,NVD,Live,Male,3400,8,Yes
+P543,28,1,2,3,LP,39,NVD,Live,Female,3500,9,Yes
+P544,20,0,1,3,LP,39,NVD,Live,Male,3000,9,Yes
+P545,28,0,1,2,LP,38,NVD,Live,Female,3000,9,Yes
+P546,28,0,1,2,LP,38,NVD,Live,Male,2800,9,Yes
+P547,28,0,1,4,LP,38,NVD,Live,Unknown,,,No
+P548,28,1,2,4,LP,38,NVD,Live,Female,3800,9,No
+P549,28,2,3,3,LP,38,NVD,Live,Female,2900,8,Yes
+P550,18,1,2,3,LP,38,NVD,Live,Male,3000,9,Yes
+P551,35,2,3,3,LP,38,NVD,Live,Male,3400,8,Yes
+P552,20,1,2,3,LP,39,NVD,Not Recorded,Unknown,,,Yes
+P553,25,2,3,3,LP,38,NVD,Not Recorded,Unknown,,,Yes
+P554,21,3,4,3,LP,39,NVD,Live,Female,2500,8,Yes
+P555,19,0,1,4,LP,38,NVD,Live,Male,3700,10,No
+P556,21,1,2,3,LP,39,NVD,Not Recorded,Unknown,,,Yes
+P557,30,2,2,3,LP,39,NVD,Live,Female,2500,8,Yes
+P558,21,0,1,3,LP,38,NVD,Live,Female,3000,8,Yes
+P559,18,1,2,3,Unknown,39,Unknown,Not Recorded,Unknown,,,Yes
+P560,27,2,2,2,LP,38,NVD,Live,Male,3800,10,Yes
+P561,26,2,1,4,LP,38,NVD,Live,Male,2900,8,No
+P562,25,0,1,2,LP,38,NVD,Live,Male,2500,8,Yes
+P563,22,0,1,4,LP,38,NVD,Not Recorded,Unknown,,,No
+P564,20,0,1,3,LP,40,NVD,Not Recorded,Unknown,,,Yes
+P565,25,3,1,3,LP,35,NVD,Live,Male,3500,9,Yes
+P566,22,0,1,3,LP,39,NVD,Live,Female,2600,10,Yes
+P567,20,0,1,3,LP,39,NVD,Live,Male,2800,7,Yes
+P568,18,1,2,4,LP,40,NVD,Not Recorded,Unknown,,,No
+P569,23,1,2,4,LP,39,NVD,Live,Male,4000,10,No
+P570,20,2,2,3,LP,39,NVD,Not Recorded,Unknown,,,Yes
+P571,25,1,2,3,LP,39,C/S,Not Recorded,Unknown,,,Yes
+P572,18,0,1,4,LP,39,NVD,Not Recorded,Unknown,,,No
+P573,21,1,2,3,LP,38,NVD,Live,Male,2500,8,Yes
+P574,19,0,1,3,LP,39,NVD,Live,Male,3500,8,Yes
+P575,24,1,2,3,LP,39,NVD,Live,Male,3100,8,Yes
+P576,22,0,1,3,LP,39,NVD,Live,Male,3900,9,Yes
+P577,25,1,2,3,LP,39,NVD,Live,Female,2400,8,Yes
+P578,27,1,2,3,LP,39,NVD,Live,Male,3800,8,Yes
+P579,18,2,3,3,LP,39,NVD,Fresh Stillbirth,Unknown,,,Yes
+P580,20,1,2,3,LP,39,NVD,Not Recorded,Unknown,,,Yes
+P581,20,1,2,3,LP,39,NVD,Live,Male,3100,8,Yes
+P582,18,1,2,3,LP,39,NVD,Fresh Stillbirth,Unknown,,,Yes
+P583,22,0,1,4,LP,39,NVD,Live,Male,3000,10,No
+P584,19,1,2,3,Unknown,39,NVD,Not Recorded,Unknown,,,Yes
+P585,24,1,2,3,Unknown,39,NVD,Not Recorded,Unknown,,,Yes
+P586,23,2,2,4,LP,38,NVD,Live,Male,3500,8,No
+P587,30,3,4,4,LP,38,NVD,Live,Male,3200,8,No
+P588,23,2,3,4,Other,39,NVD,Live,Multiple_Unspecified,,,No
+P589,19,3,4,4,Other,39,NVD,Live,Unknown,2600,,No
+P590,19,0,1,4,Unknown,39,NVD,Live,Unknown,,,No
+P591,22,0,1,4,LP,39,NVD,Not Recorded,Unknown,,,No
+P592,20,0,1,3,LP,39,Unknown,Live,Male,2900,8,Yes
+P593,23,1,2,4,LP,39,NVD,Live,Female,3100,10,No
+P594,22,0,1,3,LP,38,NVD,Live,Male,3200,10,Yes
+P595,20,0,1,3,LP,39,NVD,Live,Male,2500,10,Yes
+P596,17,0,1,4,LP,36,NVD,Live,Male,3100,8,Yes
+P597,25,2,3,4,LP,38,NVD,Live,Male,4000,10,No
+P598,30,1,2,3,LP,37,NVD,Live,Female,2500,8,Yes
+P599,30,1,2,4,LP,38,NVD,Live,Male,3500,10,No
+P600,25,1,2,3,Unknown,39,NVD,Live,Female,3100,10,Yes
+P601,18,1,2,3,LP,39,Unknown,Not Recorded,Unknown,,,Yes
+P602,18,2,3,4,LP,38,NVD,Live,Male,3100,8,No
+P603,25,2,3,3,LP,38,NVD,Live,Male,3100,9,Yes
+P604,19,1,2,3,LP,39,NVD,Live,Female,2900,10,Yes
+P605,18,1,2,3,LP,39,NVD,Not Recorded,Unknown,,,Yes
+P606,32,2,3,4,Unknown,38,NVD,Live,Male,3200,8,No
+P607,35,2,3,3,Unknown,39,NVD,Live,Male,2800,10,Yes
+P608,23,2,3,4,LP,39,NVD,Live,Male,2900,10,No
+P609,19,1,1,3,LP,39,NVD,Live,Female,2800,8,Yes

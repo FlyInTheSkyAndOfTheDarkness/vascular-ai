@@ -1,0 +1,343 @@
+{
+  "summary": {
+    "name": "high_risk_pregnancy_book2_header1",
+    "source_path": "C:\\Users\\Lenovo\\Desktop\\code\\VascularAI\\data\\external\\high_risk_pregnancy_book2.xlsx",
+    "header_row": 1,
+    "rows": 998,
+    "columns": 18
+  },
+  "columns": [
+    {
+      "column": "Name",
+      "normalized": "name",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 350,
+      "sample_values": [
+        "Rituporna",
+        "Moina",
+        "Rabeya",
+        "Shorna",
+        "Tania Akter"
+      ]
+    },
+    {
+      "column": "Age",
+      "normalized": "age",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 13,
+      "sample_values": [
+        "18",
+        "25",
+        "20",
+        "22",
+        "20"
+      ]
+    },
+    {
+      "column": "Gravida",
+      "normalized": "gravida",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 3,
+      "sample_values": [
+        "1st",
+        "2nd",
+        "1st",
+        "1st",
+        "1st"
+      ]
+    },
+    {
+      "column": "TiTi Tika",
+      "normalized": "titi_tika",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 3,
+      "sample_values": [
+        "1st",
+        "2nd",
+        "1st",
+        "3rd",
+        "2nd"
+      ]
+    },
+    {
+      "column": "গর্ভকাল",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 11,
+      "sample_values": [
+        "38 week",
+        "38 week",
+        "30 week",
+        "35 week",
+        "30 week"
+      ]
+    },
+    {
+      "column": "ওজন",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 14,
+      "sample_values": [
+        "50 kg",
+        "60 kg",
+        "55 kg",
+        "51 kg",
+        "53 kg"
+      ]
+    },
+    {
+      "column": "উচ্চতা",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 7,
+      "sample_values": [
+        "5.3''",
+        "5.2''",
+        "5.0''",
+        "5.4''",
+        "5.2''"
+      ]
+    },
+    {
+      "column": "রক্ত চাপ",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 11,
+      "sample_values": [
+        "100/60",
+        "100/70",
+        "100/60",
+        "110/65",
+        "100/55"
+      ]
+    },
+    {
+      "column": "রক্তস্বল্পতা",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 875,
+      "missing_rate": 0.8768,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "Minimal",
+        "Medium",
+        "Minimal",
+        "Medium",
+        "Minimal"
+      ]
+    },
+    {
+      "column": "জন্ডিস",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 986,
+      "missing_rate": 0.988,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "Minimal",
+        "Minimal",
+        "Minimal",
+        "Minimal",
+        "Minimal"
+      ]
+    },
+    {
+      "column": "গর্ভস্হ শিশু অবস্থান",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "Normal",
+        "Normal",
+        "Normal",
+        "Normal",
+        "Normal"
+      ]
+    },
+    {
+      "column": "গর্ভস্হ শিশু নাড়াচাড়া",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 1,
+      "sample_values": [
+        "Normal",
+        "Normal",
+        "Normal",
+        "Normal",
+        "Normal"
+      ]
+    },
+    {
+      "column": "গর্ভস্হ শিশু হৃৎস্পন্দন",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 5,
+      "sample_values": [
+        "140m",
+        "130m",
+        "120m",
+        "130m",
+        "125m"
+      ]
+    },
+    {
+      "column": "প্রসাব পরিক্ষা এলবুমিন",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 864,
+      "missing_rate": 0.8657,
+      "sentinel_rate": 0.0,
+      "distinct_count": 3,
+      "sample_values": [
+        "Higher",
+        "Minimal",
+        "Minimal",
+        "Medium",
+        "Medium"
+      ]
+    },
+    {
+      "column": "প্রসাব পরিক্ষা সুগার",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "Yes",
+        "Yes",
+        "Yes",
+        "Yes",
+        "Yes"
+      ]
+    },
+    {
+      "column": "VDRL",
+      "normalized": "vdrl",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "Negative",
+        "Positive",
+        "Negative",
+        "Positive",
+        "Negative"
+      ]
+    },
+    {
+      "column": "HRsAG",
+      "normalized": "hrsag",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "Negative",
+        "Negative",
+        "Negative",
+        "Negative",
+        "Negative"
+      ]
+    },
+    {
+      "column": "ঝুকিপূর্ণ গর্ভ",
+      "normalized": "",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "Yes",
+        "No",
+        "Yes",
+        "Yes",
+        "No"
+      ]
+    }
+  ],
+  "numeric_ranges": [
+    {
+      "column": "Age",
+      "valid_numeric_count": 998,
+      "min": 18.0,
+      "p25": 20.0,
+      "median": 22.0,
+      "p75": 25.0,
+      "max": 32.0,
+      "iqr_outliers": 0,
+      "clinical_range": [
+        10,
+        55
+      ],
+      "outside_clinical_range": 0
+    }
+  ],
+  "target_profiles": [
+    {
+      "column": "ঝুকিপূর্ণ গর্ভ",
+      "distinct_count": 2,
+      "top_values": {
+        "Yes": 666,
+        "No": 332
+      }
+    }
+  ],
+  "duplicate_profile": {
+    "exact_duplicate_rows": 0,
+    "exact_duplicate_rate": 0.0,
+    "id_like_key_checks": {
+      "Name": {
+        "duplicated_rows": 848,
+        "duplicated_rate": 0.8497,
+        "distinct_count": 350
+      }
+    }
+  },
+  "leakage_candidates": [],
+  "warnings": [
+    "Column `রক্তস্বল্পতা` has more than 20% missing values.",
+    "Column `জন্ডিস` has more than 20% missing values.",
+    "Column `প্রসাব পরিক্ষা এলবুমিন` has more than 20% missing values."
+  ]
+}

@@ -1,0 +1,345 @@
+{
+  "summary": {
+    "name": "mother_care1_maternal_dataset",
+    "source_path": "C:\\Users\\Lenovo\\Desktop\\code\\VascularAI\\data\\external\\mother_care1_maternal_dataset.csv",
+    "header_row": 0,
+    "rows": 609,
+    "columns": 13
+  },
+  "columns": [
+    {
+      "column": "patient_id",
+      "normalized": "patient_id",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 609,
+      "sample_values": [
+        "P001",
+        "P002",
+        "P003",
+        "P004",
+        "P005"
+      ]
+    },
+    {
+      "column": "mother_age_years",
+      "normalized": "mother_age_years",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 24,
+      "sample_values": [
+        "30",
+        "22",
+        "20",
+        "23",
+        "22"
+      ]
+    },
+    {
+      "column": "parity",
+      "normalized": "parity",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 5,
+      "sample_values": [
+        "1",
+        "1",
+        "0",
+        "0",
+        "1"
+      ]
+    },
+    {
+      "column": "gravida",
+      "normalized": "gravida",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 6,
+      "sample_values": [
+        "2",
+        "1",
+        "1",
+        "1",
+        "2"
+      ]
+    },
+    {
+      "column": "anc_visits",
+      "normalized": "anc_visits",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 6,
+      "sample_values": [
+        "4",
+        "4",
+        "3",
+        "3",
+        "4"
+      ]
+    },
+    {
+      "column": "admission_reason",
+      "normalized": "admission_reason",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0197,
+      "distinct_count": 6,
+      "sample_values": [
+        "LP",
+        "LP",
+        "LP",
+        "LP",
+        "LP"
+      ]
+    },
+    {
+      "column": "gestational_age_weeks",
+      "normalized": "gestational_age_weeks",
+      "dtype": "int64",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 10,
+      "sample_values": [
+        "38",
+        "39",
+        "39",
+        "38",
+        "38"
+      ]
+    },
+    {
+      "column": "delivery_mode",
+      "normalized": "delivery_mode",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.2594,
+      "distinct_count": 3,
+      "sample_values": [
+        "NVD",
+        "NVD",
+        "Unknown",
+        "NVD",
+        "NVD"
+      ]
+    },
+    {
+      "column": "baby_condition",
+      "normalized": "baby_condition",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.3005,
+      "distinct_count": 4,
+      "sample_values": [
+        "Live",
+        "Live",
+        "Not Recorded",
+        "Fresh Stillbirth",
+        "Live"
+      ]
+    },
+    {
+      "column": "baby_sex",
+      "normalized": "baby_sex",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.312,
+      "distinct_count": 5,
+      "sample_values": [
+        "Male",
+        "Female",
+        "Unknown",
+        "Female",
+        "Female"
+      ]
+    },
+    {
+      "column": "birth_weight_grams",
+      "normalized": "birth_weight_grams",
+      "dtype": "float64",
+      "missing_count": 212,
+      "missing_rate": 0.3481,
+      "sentinel_rate": 0.0,
+      "distinct_count": 26,
+      "sample_values": [
+        "2500.0",
+        "3500.0",
+        "3000.0",
+        "3000.0",
+        "2900.0"
+      ]
+    },
+    {
+      "column": "apgar_score",
+      "normalized": "apgar_score",
+      "dtype": "float64",
+      "missing_count": 222,
+      "missing_rate": 0.3645,
+      "sentinel_rate": 0.0,
+      "distinct_count": 8,
+      "sample_values": [
+        "9.0",
+        "10.0",
+        "10.0",
+        "10.0",
+        "9.0"
+      ]
+    },
+    {
+      "column": "high_risk",
+      "normalized": "high_risk",
+      "dtype": "str",
+      "missing_count": 0,
+      "missing_rate": 0.0,
+      "sentinel_rate": 0.0,
+      "distinct_count": 2,
+      "sample_values": [
+        "No",
+        "No",
+        "Yes",
+        "Yes",
+        "No"
+      ]
+    }
+  ],
+  "numeric_ranges": [
+    {
+      "column": "mother_age_years",
+      "valid_numeric_count": 609,
+      "min": 16.0,
+      "p25": 20.0,
+      "median": 23.0,
+      "p75": 28.0,
+      "max": 48.0,
+      "iqr_outliers": 2,
+      "clinical_range": [
+        10,
+        55
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "parity",
+      "valid_numeric_count": 609,
+      "min": 0.0,
+      "p25": 0.0,
+      "median": 1.0,
+      "p75": 2.0,
+      "max": 4.0,
+      "iqr_outliers": 0,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "gravida",
+      "valid_numeric_count": 609,
+      "min": 0.0,
+      "p25": 1.0,
+      "median": 2.0,
+      "p75": 2.0,
+      "max": 5.0,
+      "iqr_outliers": 48,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "anc_visits",
+      "valid_numeric_count": 609,
+      "min": 0.0,
+      "p25": 3.0,
+      "median": 3.0,
+      "p75": 4.0,
+      "max": 5.0,
+      "iqr_outliers": 4,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "gestational_age_weeks",
+      "valid_numeric_count": 609,
+      "min": 22.0,
+      "p25": 38.0,
+      "median": 39.0,
+      "p75": 39.0,
+      "max": 40.0,
+      "iqr_outliers": 14,
+      "clinical_range": [
+        4,
+        45
+      ],
+      "outside_clinical_range": 0
+    },
+    {
+      "column": "birth_weight_grams",
+      "valid_numeric_count": 397,
+      "min": 1900.0,
+      "p25": 2600.0,
+      "median": 3000.0,
+      "p75": 3200.0,
+      "max": 4200.0,
+      "iqr_outliers": 3,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    },
+    {
+      "column": "apgar_score",
+      "valid_numeric_count": 387,
+      "min": 2.0,
+      "p25": 8.0,
+      "median": 9.0,
+      "p75": 10.0,
+      "max": 10.0,
+      "iqr_outliers": 3,
+      "clinical_range": null,
+      "outside_clinical_range": null
+    }
+  ],
+  "target_profiles": [
+    {
+      "column": "high_risk",
+      "distinct_count": 2,
+      "top_values": {
+        "Yes": 379,
+        "No": 230
+      }
+    }
+  ],
+  "duplicate_profile": {
+    "exact_duplicate_rows": 0,
+    "exact_duplicate_rate": 0.0,
+    "id_like_key_checks": {
+      "patient_id": {
+        "duplicated_rows": 0,
+        "duplicated_rate": 0.0,
+        "distinct_count": 609
+      }
+    }
+  },
+  "leakage_candidates": [
+    "delivery_mode",
+    "birth_weight_grams",
+    "apgar_score"
+  ],
+  "warnings": [
+    "Potential leakage columns detected; review before modeling.",
+    "Column `delivery_mode` has more than 5% sentinel text values.",
+    "Column `baby_condition` has more than 5% sentinel text values.",
+    "Column `baby_sex` has more than 5% sentinel text values.",
+    "Column `birth_weight_grams` has more than 20% missing values.",
+    "Column `apgar_score` has more than 20% missing values."
+  ]
+}
