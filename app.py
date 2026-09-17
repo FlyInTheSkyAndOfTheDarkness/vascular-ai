@@ -2333,15 +2333,60 @@ def db_engine(url: str):
     return create_engine(url, pool_pre_ping=True, future=True)
 
 
+# Статус последней попытки подключения к внешней БД: url / ok / error.
+_DB_STATUS: dict[str, object] = {"url": "", "ok": None, "error": ""}
+
+
+def db_error() -> str:
+    return str(_DB_STATUS.get("error") or "")
+
+
+def short_db_error(error: Exception) -> str:
+    """Короткая понятная причина вместо простыни из psycopg."""
+    text = f"{type(error).__name__}: {error}".replace("\n", " ")
+    lowered = text.lower()
+    if "password authentication failed" in lowered:
+        return (
+            "неверный пароль или имя пользователя. Для Session pooler имя пользователя обязательно "
+            "с кодом проекта: postgres.<ref> (например postgres.qroufctfsccgjmtnebqb); "
+            "пароль — пароль базы из Supabase (Settings → Database → Reset database password)"
+        )
+    if "could not translate host name" in lowered or "name or service not known" in lowered:
+        return "не найден хост подключения — проверьте адрес пулера в DATABASE_URL"
+    if "no pq wrapper" in lowered:
+        return "в окружении нет драйвера psycopg — нужен psycopg[binary] в requirements.txt"
+    if "timeout" in lowered or "timed out" in lowered:
+        return "истекло время подключения — проверьте, не ушёл ли проект Supabase в паузу"
+    return text[:220]
+
+
 def engine_or_none():
+    """Движок внешней БД, только если подключение действительно работает; иначе None (режим CSV)."""
+    from sqlalchemy import text
+
     url = database_url()
     if not url:
         return None
-    try:
+    if _DB_STATUS.get("url") == url:
+        if _DB_STATUS.get("ok") is False:
+            return None
         return db_engine(url)
-    except Exception as error:  # нет драйвера или плохой DSN — остаёмся на CSV
-        st.warning(f"Не удалось подключиться к внешней БД ({error}). Работаем на локальных CSV.")
+    try:
+        engine = db_engine(url)
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+    except Exception as error:
+        reason = short_db_error(error)
+        _DB_STATUS.update({"url": url, "ok": False, "error": reason})
+        if not st.session_state.get("_db_warning_shown"):
+            st.session_state["_db_warning_shown"] = True
+            st.warning(
+                "Внешняя БД недоступна, приложение работает на локальных CSV "
+                f"(данные не будут переживать перезапуск). Причина: {reason}"
+            )
         return None
+    _DB_STATUS.update({"url": url, "ok": True, "error": ""})
+    return engine
 
 
 _DB_TABLES_READY: set[str] = set()
@@ -2380,6 +2425,8 @@ def storage_label() -> str:
 
 
 def storage_hint() -> str:
+    if database_url() and _DB_STATUS.get("ok") is False:
+        return "Хранилище: CSV (внешняя БД недоступна)"
     files = "Supabase Storage" if attachments_in_cloud() else "локальные файлы"
     return f"Хранилище: {storage_label()} · {files}"
 
@@ -2406,12 +2453,16 @@ def upload_attachment_to_cloud(relative_path: str, data: bytes) -> None:
 def ensure_store() -> None:
     engine = engine_or_none()
     if engine is not None:
-        with engine.begin() as conn:
-            ensure_db_table(conn, table_name(PATIENTS_PATH), PATIENT_COLUMNS)
-            ensure_db_table(conn, table_name(VISITS_PATH), VISIT_COLUMNS)
-            ensure_db_table(conn, table_name(ATTACHMENTS_PATH), ATTACHMENT_COLUMNS)
-            ensure_db_table(conn, table_name(ACTIVITY_PATH), ACTIVITY_COLUMNS)
-            ensure_db_table(conn, table_name(USERS_PATH), USER_COLUMNS)
+        try:
+            with engine.begin() as conn:
+                ensure_db_table(conn, table_name(PATIENTS_PATH), PATIENT_COLUMNS)
+                ensure_db_table(conn, table_name(VISITS_PATH), VISIT_COLUMNS)
+                ensure_db_table(conn, table_name(ATTACHMENTS_PATH), ATTACHMENT_COLUMNS)
+                ensure_db_table(conn, table_name(ACTIVITY_PATH), ACTIVITY_COLUMNS)
+                ensure_db_table(conn, table_name(USERS_PATH), USER_COLUMNS)
+            return
+        except Exception as error:
+            _DB_STATUS.update({"url": database_url(), "ok": False, "error": short_db_error(error)})
         return
 
     CLINIC_DIR.mkdir(parents=True, exist_ok=True)
@@ -2439,10 +2490,7 @@ def read_csv(path: Path, columns: list[str]) -> pd.DataFrame:
             with engine.connect() as conn:
                 frame = pd.read_sql_query(f'SELECT * FROM "{table}"', conn)
         except Exception as error:
-            st.error(
-                f"Не удалось прочитать таблицу «{table}» из внешней БД: {error}. "
-                "Проверьте DATABASE_URL: пароль базы, строку Session pooler и наличие SSL (sslmode=require)."
-            )
+            st.error(f"Не удалось прочитать таблицу «{table}» из внешней БД: {short_db_error(error)}")
             return pd.DataFrame(columns=columns)
         frame = frame.fillna("")
         for column in columns:
@@ -2471,7 +2519,7 @@ def write_csv(df: pd.DataFrame, path: Path, columns: list[str]) -> None:
                 conn.execute(text(f'DELETE FROM "{table}"'))
                 payload.to_sql(table, conn, if_exists="append", index=False)
         except Exception as error:
-            st.error(f"Не удалось записать таблицу «{table}» во внешнюю БД: {error}")
+            st.error(f"Не удалось записать таблицу «{table}» во внешнюю БД: {short_db_error(error)}")
         return
 
     path.parent.mkdir(parents=True, exist_ok=True)
