@@ -228,6 +228,40 @@ Settings → Pages → Build and deployment → **Source: GitHub Actions**.
 
 GitHub Pages отдаёт статику, поэтому сам кабинет там работать не может (Streamlit нужен Python-процесс и WebSocket) — он остаётся на Streamlit Community Cloud, а Pages служит витриной и точкой входа.
 
+### Куда деплоить сам кабинет
+
+| Вариант | Плюсы | Минусы |
+| --- | --- | --- |
+| Streamlit Community Cloud (текущий) | бесплатно, деплой из GitHub | 1 ГБ RAM, засыпает при простое |
+| Railway / Fly.io (контейнер) | ~$5/мес, всегда включён, больше RAM | платно |
+| Google Cloud Run (контейнер) | оплата по факту, часто укладывается в бесплатный лимит | холодный старт при масштабировании в ноль |
+| VPS + Docker (Hetzner и др.) | полный контроль и много памяти | нужно администрирование |
+
+В проекте лежит готовый `Dockerfile` (и `.dockerignore`), данные уже во внешней БД, поэтому диска контейнеру не нужно:
+
+```powershell
+docker build -t vascularai-cabinet .
+docker run --rm -p 8501:8501 `
+  -e DATABASE_URL="postgresql://postgres.<ref>:<пароль>@aws-0-<регион>.pooler.supabase.com:5432/postgres" `
+  -e SUPABASE_URL="https://<ref>.supabase.co" `
+  -e SUPABASE_SERVICE_KEY="<service_role key>" `
+  -e SUPABASE_BUCKET="attachments" `
+  vascularai-cabinet
+```
+
+Секреты передаются переменными окружения — приложение читает их так же, как `st.secrets`. Команды для хостингов:
+
+```powershell
+# Railway (контейнер будет жить постоянно)
+npm i -g @railway/cli
+railway login
+railway init
+railway up
+
+# Google Cloud Run (оплата по факту использования)
+gcloud run deploy vascularai --source . --region us-central1 --allow-unauthenticated --memory 1Gi
+```
+
 ## Производительность
 
 - Чтение таблиц из внешней БД кэшируется на 30 секунд, а любая запись сразу сбрасывает кэш (`read_table_cached` + `_DATA_REVISION`) — это убирает большую часть задержек на сетевых запросах.

@@ -1,0 +1,19 @@
+.git
+.github
+.gitignore
+.venv
+__pycache__
+*.pyc
+*.pyo
+.streamlit/secrets.toml
+
+# рабочие данные и служебные каталоги в образ не нужны: приложение создаст их само,
+# а сами данные хранятся во внешней БД и Supabase Storage
+data/
+docs/
+reports/
+maternal+health+risk.zip
+_pages_test/
+tmp_*.py
+Dockerfile
+README.md
