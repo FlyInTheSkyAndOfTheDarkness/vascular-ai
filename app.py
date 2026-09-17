@@ -1560,7 +1560,7 @@ def add_style() -> None:
         }
 
         section[data-testid="stSidebar"] [data-testid="stSidebarUserContent"]
-        [data-testid="stElementContainer"]:has(.side-user) {
+        [data-testid="stElementContainer"]:has(.side-storage) {
             margin-top: auto;
         }
 
@@ -1597,6 +1597,16 @@ def add_style() -> None:
         section[data-testid="stSidebar"] .st-key-nav_settings button::before { -webkit-mask-image: var(--icon-gear); mask-image: var(--icon-gear); }
         section[data-testid="stSidebar"] .st-key-nav_admin button::before { -webkit-mask-image: var(--icon-shield); mask-image: var(--icon-shield); }
 
+        .side-storage {
+            color: rgba(255, 255, 255, 0.48);
+            font-size: 0.62rem;
+            font-weight: 750;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.45rem;
+            padding: 0 0.15rem;
+            text-transform: uppercase;
+        }
+
         .side-user {
             align-items: center;
             background: rgba(255, 255, 255, 0.06);
@@ -1604,7 +1614,6 @@ def add_style() -> None:
             border-radius: 10px;
             display: flex;
             gap: 0.6rem;
-            margin-top: auto;
             padding: 0.6rem 0.65rem;
         }
 
@@ -2357,6 +2366,24 @@ def attachments_in_cloud() -> bool:
     return bool(secret_value("SUPABASE_URL") and secret_value("SUPABASE_SERVICE_KEY"))
 
 
+def storage_label() -> str:
+    url = database_url()
+    if not url:
+        return "локальные CSV"
+    if url.startswith("postgresql+psycopg://"):
+        return "Supabase / Postgres"
+    if url.startswith("sqlite+libsql://"):
+        return "Turso (libSQL)"
+    if url.startswith("sqlite://"):
+        return "SQLite"
+    return "внешняя БД"
+
+
+def storage_hint() -> str:
+    files = "Supabase Storage" if attachments_in_cloud() else "локальные файлы"
+    return f"Хранилище: {storage_label()} · {files}"
+
+
 def upload_attachment_to_cloud(relative_path: str, data: bytes) -> None:
     """Кладёт файл вложения в Supabase Storage (bucket из SUPABASE_BUCKET)."""
     import requests
@@ -2406,10 +2433,17 @@ def read_csv(path: Path, columns: list[str]) -> pd.DataFrame:
     engine = engine_or_none()
     if engine is not None:
         table = table_name(path)
-        with engine.begin() as conn:
-            ensure_db_table(conn, table, columns)
-        with engine.connect() as conn:
-            frame = pd.read_sql_query(f'SELECT * FROM "{table}"', conn)
+        try:
+            with engine.begin() as conn:
+                ensure_db_table(conn, table, columns)
+            with engine.connect() as conn:
+                frame = pd.read_sql_query(f'SELECT * FROM "{table}"', conn)
+        except Exception as error:
+            st.error(
+                f"Не удалось прочитать таблицу «{table}» из внешней БД: {error}. "
+                "Проверьте DATABASE_URL: пароль базы, строку Session pooler и наличие SSL (sslmode=require)."
+            )
+            return pd.DataFrame(columns=columns)
         frame = frame.fillna("")
         for column in columns:
             if column not in frame.columns:
@@ -2431,10 +2465,13 @@ def write_csv(df: pd.DataFrame, path: Path, columns: list[str]) -> None:
 
         table = table_name(path)
         payload = df[columns].fillna("").astype(str)
-        with engine.begin() as conn:
-            ensure_db_table(conn, table, columns)
-            conn.execute(text(f'DELETE FROM "{table}"'))
-            payload.to_sql(table, conn, if_exists="append", index=False)
+        try:
+            with engine.begin() as conn:
+                ensure_db_table(conn, table, columns)
+                conn.execute(text(f'DELETE FROM "{table}"'))
+                payload.to_sql(table, conn, if_exists="append", index=False)
+        except Exception as error:
+            st.error(f"Не удалось записать таблицу «{table}» во внешнюю БД: {error}")
         return
 
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -3175,6 +3212,10 @@ def render_sidebar(user: dict[str, str], pages: list[str]) -> None:
             st.session_state.pop(PATIENT_VIEW_KEY, None)
             st.rerun()
 
+    st.sidebar.markdown(
+        f'<div class="side-storage">{escape(storage_hint())}</div>',
+        unsafe_allow_html=True,
+    )
     st.sidebar.markdown(
         f"""
         <div class="side-user">
