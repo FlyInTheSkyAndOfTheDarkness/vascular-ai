@@ -2332,12 +2332,29 @@ def db_engine(url: str):
     return create_engine(url, pool_pre_ping=True, future=True)
 
 
-# Статус последней попытки подключения к внешней БД: url / ok / error.
-_DB_STATUS: dict[str, object] = {"url": "", "ok": None, "error": ""}
+# Состояние хранилища живёт в session_state: скрипт исполняется заново на каждой перерисовке,
+# поэтому в переменных модуля его держать нельзя — иначе каждый rerun заново ходит в БД.
+_FALLBACK_STATE: dict[str, object] = {}
+
+
+def state_obj(key: str, factory):
+    try:
+        if key not in st.session_state:
+            st.session_state[key] = factory()
+        return st.session_state[key]
+    except Exception:
+        if key not in _FALLBACK_STATE:
+            _FALLBACK_STATE[key] = factory()
+        return _FALLBACK_STATE[key]
+
+
+def db_status() -> dict[str, object]:
+    """Статус последней попытки подключения: url / ok / error."""
+    return state_obj("_db_status", lambda: {"url": "", "ok": None, "error": ""})
 
 
 def db_error() -> str:
-    return str(_DB_STATUS.get("error") or "")
+    return str(db_status().get("error") or "")
 
 
 def url_cache_key() -> str:
@@ -2371,8 +2388,9 @@ def engine_or_none():
     url = database_url()
     if not url:
         return None
-    if _DB_STATUS.get("url") == url:
-        if _DB_STATUS.get("ok") is False:
+    status = db_status()
+    if status.get("url") == url:
+        if status.get("ok") is False:
             return None
         return db_engine(url)
     try:
@@ -2381,7 +2399,7 @@ def engine_or_none():
             conn.execute(text("SELECT 1"))
     except Exception as error:
         reason = short_db_error(error)
-        _DB_STATUS.update({"url": url, "ok": False, "error": reason})
+        status.update({"url": url, "ok": False, "error": reason})
         if not st.session_state.get("_db_warning_shown"):
             st.session_state["_db_warning_shown"] = True
             st.warning(
@@ -2389,11 +2407,13 @@ def engine_or_none():
                 f"(данные не будут переживать перезапуск). Причина: {reason}"
             )
         return None
-    _DB_STATUS.update({"url": url, "ok": True, "error": ""})
+    status.update({"url": url, "ok": True, "error": ""})
     return engine
 
 
-_DB_TABLES_READY: set[str] = set()
+def tables_ready() -> set[str]:
+    """Таблицы, которые уже созданы в этой сессии — чтобы не гонять CREATE TABLE на каждый rerun."""
+    return state_obj("_db_tables_ready", set)
 
 
 def table_name(path: Path) -> str:
@@ -2402,13 +2422,14 @@ def table_name(path: Path) -> str:
 
 
 def ensure_db_table(conn, table: str, columns: list[str]) -> None:
-    if table in _DB_TABLES_READY:
+    ready = tables_ready()
+    if table in ready:
         return
     from sqlalchemy import text
 
     definition = ", ".join(f'"{column}" TEXT' for column in columns)
     conn.execute(text(f'CREATE TABLE IF NOT EXISTS "{table}" ({definition})'))
-    _DB_TABLES_READY.add(table)
+    ready.add(table)
 
 
 def attachments_in_cloud() -> bool:
@@ -2429,7 +2450,7 @@ def storage_label() -> str:
 
 
 def storage_hint() -> str:
-    if database_url() and _DB_STATUS.get("ok") is False:
+    if database_url() and db_status().get("ok") is False:
         return "Хранилище: CSV (внешняя БД недоступна)"
     files = "Supabase Storage" if attachments_in_cloud() else "локальные файлы"
     return f"Хранилище: {storage_label()} · {files}"
@@ -2466,7 +2487,7 @@ def ensure_store() -> None:
                 ensure_db_table(conn, table_name(USERS_PATH), USER_COLUMNS)
             return
         except Exception as error:
-            _DB_STATUS.update({"url": database_url(), "ok": False, "error": short_db_error(error)})
+            db_status().update({"url": database_url(), "ok": False, "error": short_db_error(error)})
         return
 
     CLINIC_DIR.mkdir(parents=True, exist_ok=True)
@@ -2489,7 +2510,7 @@ def read_csv(path: Path, columns: list[str]) -> pd.DataFrame:
     if engine is not None:
         table = table_name(path)
         try:
-            return read_table_cached(url_cache_key(), table, tuple(columns), _DATA_REVISION)
+            return read_table_cached(url_cache_key(), table, tuple(columns), data_revision())
         except Exception as error:
             st.error(f"Не удалось прочитать таблицу «{table}» из внешней БД: {short_db_error(error)}")
             return pd.DataFrame(columns=columns)
@@ -2503,12 +2524,13 @@ def read_csv(path: Path, columns: list[str]) -> pd.DataFrame:
 
 
 # Версия данных в БД: меняется при каждой записи, чтобы сбросить кэш чтения.
-_DATA_REVISION = 0
+# При перерисовке скрипт стартует заново, поэтому значение тоже храним в session_state.
+def data_revision() -> int:
+    return int(state_obj("_db_revision", lambda: {"value": 0})["value"])
 
 
 def bump_data_revision() -> None:
-    global _DATA_REVISION
-    _DATA_REVISION += 1
+    state_obj("_db_revision", lambda: {"value": 0})["value"] = data_revision() + 1
 
 
 @st.cache_data(show_spinner=False, ttl=30)
