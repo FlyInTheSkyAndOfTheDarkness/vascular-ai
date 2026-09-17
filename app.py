@@ -5,6 +5,7 @@ import json
 import os
 import re
 import secrets
+import time
 import uuid
 from datetime import datetime, timedelta
 from html import escape
@@ -2456,6 +2457,20 @@ def storage_hint() -> str:
     return f"Хранилище: {storage_label()} · {files}"
 
 
+def session_hint() -> str:
+    """Диагностика: когда началась сессия и сколько заняла последняя перерисовка.
+
+    Если время старта меняется при переключении страниц — приложение перезапускается.
+    """
+    box = state_obj("_session_started", lambda: {"at": datetime.now()})
+    started = box.get("at")
+    if not isinstance(started, datetime):
+        started = datetime.now()
+    elapsed = int(st.session_state.get("_last_run_ms", 0) or 0)
+    label = f"Сессия с {started.strftime('%H:%M')}"
+    return f"{label} · обновление {elapsed} мс" if elapsed else label
+
+
 def upload_attachment_to_cloud(relative_path: str, data: bytes) -> None:
     """Кладёт файл вложения в Supabase Storage (bucket из SUPABASE_BUCKET)."""
     import requests
@@ -3309,7 +3324,8 @@ def render_sidebar(user: dict[str, str], pages: list[str]) -> None:
             st.rerun()
 
     st.sidebar.markdown(
-        f'<div class="side-storage">{escape(storage_hint())}</div>',
+        f'<div class="side-storage">{escape(storage_hint())}</div>'
+        f'<div class="side-storage">{escape(session_hint())}</div>',
         unsafe_allow_html=True,
     )
     st.sidebar.markdown(
@@ -4972,6 +4988,15 @@ def render_admin_workspace(user: dict[str, str]) -> None:
 
 
 def main() -> None:
+    """Обёртка ради замера времени перерисовки (видно в сайдбаре)."""
+    started = time.perf_counter()
+    try:
+        app_body()
+    finally:
+        st.session_state["_last_run_ms"] = int((time.perf_counter() - started) * 1000)
+
+
+def app_body() -> None:
     add_style()
     ensure_store()
     ensure_auth_store()
