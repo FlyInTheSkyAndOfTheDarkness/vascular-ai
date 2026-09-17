@@ -3,5 +3,31 @@
   <link rel="modulepreload" crossorigin href="assets/three-DBFNw0_3.js">
   <link rel="modulepreload" crossorigin href="assets/motion-B4vX38HX.js">
   <link rel="stylesheet" crossorigin href="assets/index-CBHG-z2o.css">
-</head><body><div id="root"></div></body></html>
+  <!-- Кнопка перехода в кабинет (добавлено для VascularAI): ведёт на /login/, откуда редирект в Streamlit -->
+  <style>
+    .va-cabinet-cta {
+      align-items: center;
+      background: #bd6875;
+      border-radius: 999px;
+      bottom: 22px;
+      box-shadow: 0 12px 30px rgba(95, 59, 65, 0.28);
+      color: #fffdfa;
+      display: inline-flex;
+      font: 750 14px/1 Manrope, Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+      gap: 8px;
+      padding: 13px 20px;
+      position: fixed;
+      right: 22px;
+      text-decoration: none;
+      transition: background 0.15s ease, transform 0.15s ease;
+      z-index: 60;
+    }
+    .va-cabinet-cta:hover { background: #a85763; transform: translateY(-2px); }
+    @media (max-width: 640px) {
+      .va-cabinet-cta { bottom: 14px; font-size: 13px; padding: 11px 15px; right: 14px; }
+    }
+  </style>
+</head><body><div id="root"></div>
+<a class="va-cabinet-cta" href="login/index.html">Войти в кабинет →</a>
+</body></html>
 
