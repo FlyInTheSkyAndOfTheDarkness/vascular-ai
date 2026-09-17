@@ -3060,6 +3060,39 @@ NAV_SLUGS = {
     "Админ-панель": "admin",
 }
 
+# Синонимы для ссылок с лендинга: /login, /cabinet, /app ведут на домашний раздел.
+PAGE_SLUG_ALIASES = {
+    "login": "dashboard",
+    "cabinet": "dashboard",
+    "app": "dashboard",
+    "home": "dashboard",
+    "visits": "patients",
+    "reports": "reports",
+}
+
+
+def apply_page_from_query(pages: list[str]) -> None:
+    """Открыть раздел по ссылке вида ?page=patients (её формируют страницы лендинга).
+
+    Параметр применяется один раз и сразу убирается из адреса, чтобы дальше
+    не мешать обычной навигации по сайдбару.
+    """
+    try:
+        raw = st.query_params.get("page")
+    except Exception:
+        return
+    if not raw:
+        return
+    slug = str(raw).strip().lower()
+    slug = PAGE_SLUG_ALIASES.get(slug, slug)
+    target = next((page for page, value in NAV_SLUGS.items() if value == slug), None)
+    if target and target in pages:
+        st.session_state[NAV_KEY] = target
+    try:
+        del st.query_params["page"]
+    except Exception:
+        pass
+
 
 def initials_of(name: str) -> str:
     parts = [part for part in re.split(r"\s+", (name or "").strip()) if part]
@@ -5026,6 +5059,9 @@ def app_body() -> None:
     )
     if st.session_state.get(NAV_KEY) not in pages:
         st.session_state[NAV_KEY] = pages[0]
+
+    # ссылки с лендинга вида /login, /intake, /patients → ?page=<slug>
+    apply_page_from_query(pages)
 
     page = st.session_state.get(NAV_KEY) or pages[0]
     render_sidebar(user, pages)

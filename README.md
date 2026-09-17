@@ -206,6 +206,28 @@ https://<app>.streamlit.app/app/static/landing/index.html
 
 Например: `https://med-it.streamlit.app/app/static/landing/index.html`. Для публичной витрины лендинг лучше залить отдельно на Vercel как статику (папка `static/landing/` — готовая сборка).
 
+### GitHub Pages: лендинг в корне, кабинет — по ссылкам
+
+Workflow `.github/workflows/pages.yml` публикует папку `static/landing` на GitHub Pages. Включите один раз:
+Settings → Pages → Build and deployment → **Source: GitHub Actions**.
+
+Структура адресов (пример для репозитория `vascular-ai`):
+
+| Адрес | Что открывается |
+| --- | --- |
+| `/vascular-ai/` | лендинг (главная) |
+| `/vascular-ai/login/`, `/cabinet/` | переход на вход в кабинет |
+| `/vascular-ai/intake/` | кабинет, раздел «Новый расчёт» |
+| `/vascular-ai/patients/` | кабинет, раздел «Пациенты» |
+| `/vascular-ai/reports/` | кабинет, раздел «Отчёты» |
+| `/vascular-ai/admin/` | кабинет, админ-панель |
+
+Страницы-переходы — это статические файлы в `static/landing/<slug>/index.html`; они ведут на кабинет с параметром `?page=<slug>`, который приложение применяет один раз и убирает из адреса.
+
+Адрес кабинета задаётся в одном месте — `static/landing/cabinet-link.js` (`window.VASCULARAI_CABINET_URL`). При переходе на другой хостинг правится только эта строка.
+
+GitHub Pages отдаёт статику, поэтому сам кабинет там работать не может (Streamlit нужен Python-процесс и WebSocket) — он остаётся на Streamlit Community Cloud, а Pages служит витриной и точкой входа.
+
 ## Производительность
 
 - Чтение таблиц из внешней БД кэшируется на 30 секунд, а любая запись сразу сбрасывает кэш (`read_table_cached` + `_DATA_REVISION`) — это убирает большую часть задержек на сетевых запросах.
