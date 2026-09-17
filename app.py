@@ -14,7 +14,6 @@ import altair as alt
 import joblib
 import numpy as np
 import pandas as pd
-import shap
 import streamlit as st
 
 
@@ -2341,6 +2340,11 @@ def db_error() -> str:
     return str(_DB_STATUS.get("error") or "")
 
 
+def url_cache_key() -> str:
+    """Хэш строки подключения — в кэш не должен попадать пароль."""
+    return hashlib.sha256(database_url().encode("utf-8")).hexdigest()[:16]
+
+
 def short_db_error(error: Exception) -> str:
     """Короткая понятная причина вместо простыни из psycopg."""
     text = f"{type(error).__name__}: {error}".replace("\n", " ")
@@ -2485,18 +2489,10 @@ def read_csv(path: Path, columns: list[str]) -> pd.DataFrame:
     if engine is not None:
         table = table_name(path)
         try:
-            with engine.begin() as conn:
-                ensure_db_table(conn, table, columns)
-            with engine.connect() as conn:
-                frame = pd.read_sql_query(f'SELECT * FROM "{table}"', conn)
+            return read_table_cached(url_cache_key(), table, tuple(columns), _DATA_REVISION)
         except Exception as error:
             st.error(f"Не удалось прочитать таблицу «{table}» из внешней БД: {short_db_error(error)}")
             return pd.DataFrame(columns=columns)
-        frame = frame.fillna("")
-        for column in columns:
-            if column not in frame.columns:
-                frame[column] = ""
-        return frame[columns].astype(str)
 
     ensure_store()
     df = pd.read_csv(path, dtype=str).fillna("")
@@ -2504,6 +2500,31 @@ def read_csv(path: Path, columns: list[str]) -> pd.DataFrame:
         if column not in df.columns:
             df[column] = ""
     return df[columns]
+
+
+# Версия данных в БД: меняется при каждой записи, чтобы сбросить кэш чтения.
+_DATA_REVISION = 0
+
+
+def bump_data_revision() -> None:
+    global _DATA_REVISION
+    _DATA_REVISION += 1
+
+
+@st.cache_data(show_spinner=False, ttl=30)
+def read_table_cached(cache_key: str, table: str, columns: tuple[str, ...], revision: int) -> pd.DataFrame:
+    """Чтение таблицы из внешней БД с коротким кэшем (сеть до БД — главный источник задержек).
+
+    cache_key — хэш строки подключения, чтобы пароль не попадал в аргументы кэша.
+    """
+    engine = db_engine(database_url())
+    with engine.connect() as conn:
+        frame = pd.read_sql_query(f'SELECT * FROM "{table}"', conn)
+    frame = frame.fillna("")
+    for column in columns:
+        if column not in frame.columns:
+            frame[column] = ""
+    return frame[list(columns)].astype(str)
 
 
 def write_csv(df: pd.DataFrame, path: Path, columns: list[str]) -> None:
@@ -2518,6 +2539,7 @@ def write_csv(df: pd.DataFrame, path: Path, columns: list[str]) -> None:
                 ensure_db_table(conn, table, columns)
                 conn.execute(text(f'DELETE FROM "{table}"'))
                 payload.to_sql(table, conn, if_exists="append", index=False)
+            bump_data_revision()
         except Exception as error:
             st.error(f"Не удалось записать таблицу «{table}» во внешнюю БД: {short_db_error(error)}")
         return
@@ -2601,7 +2623,6 @@ def ensure_auth_store() -> None:
 
 
 def users_df() -> pd.DataFrame:
-    ensure_auth_store()
     return read_csv(USERS_PATH, USER_COLUMNS)
 
 
@@ -2857,6 +2878,9 @@ def load_bundle() -> dict:
 
 @st.cache_resource
 def load_explainer(_model, _background: pd.DataFrame):
+    # shap тяжёлый — импортируем лениво, чтобы быстрее стартовало приложение
+    import shap
+
     return shap.TreeExplainer(_model, feature_perturbation="tree_path_dependent")
 
 
