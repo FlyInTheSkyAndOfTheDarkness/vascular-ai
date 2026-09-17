@@ -2898,24 +2898,27 @@ def load_bundle() -> dict:
     return joblib.load(MODEL_PATH)
 
 
-@st.cache_resource
-def load_explainer(_model, _background: pd.DataFrame):
-    # shap тяжёлый — импортируем лениво, чтобы быстрее стартовало приложение
-    import shap
+def prediction_shap_values(model, patient: pd.DataFrame, class_index: int) -> np.ndarray:
+    """TreeSHAP-значения признаков для выбранного класса.
 
-    return shap.TreeExplainer(_model, feature_perturbation="tree_path_dependent")
+    Берём их встроенной функцией xgboost (`pred_contribs`) — результат совпадает со
+    `shap.TreeExplainer` до знака, но не тянет numba/llvmlite (это ~8 секунд импорта и сотни МБ памяти).
+    """
+    import xgboost as xgb
 
-
-def prediction_shap_values(explainer, patient: pd.DataFrame, class_index: int) -> np.ndarray:
-    values = explainer.shap_values(patient)
-    if isinstance(values, list):
-        return np.asarray(values[class_index][0], dtype=float)
-    values_array = np.asarray(values, dtype=float)
-    if values_array.ndim == 3:
-        return values_array[0, :, class_index]
-    if values_array.ndim == 2:
-        return values_array[0]
-    raise ValueError(f"Unexpected SHAP values shape: {values_array.shape}")
+    booster = model.get_booster() if hasattr(model, "get_booster") else model
+    matrix = xgb.DMatrix(patient, feature_names=list(patient.columns))
+    contribs = np.asarray(booster.predict(matrix, pred_contribs=True), dtype=float)
+    if contribs.ndim == 3:
+        return contribs[0, class_index, :-1]
+    row = contribs.reshape(-1)
+    width = patient.shape[1] + 1
+    if row.size == width:
+        return row[:-1]
+    if width and row.size % width == 0:
+        block = row.reshape(-1, width)
+        return block[min(class_index, block.shape[0] - 1), :-1]
+    return row[:-1]
 
 
 def format_value(feature: str, value: float) -> str:
@@ -2931,8 +2934,7 @@ def predict_risk(values: dict[str, float], bundle: dict) -> dict[str, object]:
     patient = pd.DataFrame([{feature: values[feature] for feature in feature_names}], columns=feature_names)
     probabilities = model.predict_proba(patient)[0]
     class_index = int(np.argmax(probabilities))
-    explainer = load_explainer(model, bundle["shap_background"])
-    shap_values = prediction_shap_values(explainer, patient, class_index)
+    shap_values = prediction_shap_values(model, patient, class_index)
     rows = sorted(
         zip(feature_names, patient.iloc[0].to_numpy(dtype=float), shap_values),
         key=lambda item: abs(item[2]),
