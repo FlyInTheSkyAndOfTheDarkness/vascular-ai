@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "tables": {
+    "users": "da60ee41a3114cd2c030b5ab0c091453|5",
+    "patients": "dfa25a6c3ec5dd17a6dbf12995a50215|2",
+    "visits": "35244754e03fefc9caa457d4362c446f|6",
+    "attachments": "83a56d9456f1677bcb5fb9173508fc9b|1",
+    "activity": "49f4e14548162c6d8bdc600375d61c0b|23"
+  },
+  "attachment_files": 1
+}

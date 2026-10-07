@@ -1,0 +1,11 @@
+med-it.asia {
+    encode zstd gzip
+    root * /srv/landing
+    file_server
+}
+
+cabinet.med-it.asia {
+    encode zstd gzip
+    header Referrer-Policy "no-referrer"
+    reverse_proxy cabinet:8501
+}

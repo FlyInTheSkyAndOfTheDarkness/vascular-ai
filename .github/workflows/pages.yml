@@ -2,14 +2,11 @@ name: Deploy landing to GitHub Pages
 
 # Публикует статический лендинг (папка static/landing) на GitHub Pages.
 # Кабинет врача — это Streamlit-приложение, ему нужен Python-процесс и WebSocket,
-# поэтому он живёт отдельно (Streamlit Community Cloud), а не на Pages.
+# поэтому он живёт отдельно на cabinet.med-it.asia, а не на Pages.
+# static/landing/CNAME задаёт основной домен лендинга: med-it.asia.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "static/landing/**"
-      - ".github/workflows/pages.yml"
+  # Main deployment is now compose.yaml on the server. Pages is manual only.
   workflow_dispatch:
 
 permissions:

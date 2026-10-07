@@ -1,0 +1,8 @@
+http://med-it.localhost:18080 {
+    root * /srv/landing
+    file_server
+}
+
+http://cabinet.med-it.localhost:18080 {
+    reverse_proxy cabinet:8501
+}

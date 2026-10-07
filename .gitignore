@@ -6,3 +6,10 @@ data/raw/
 data/clinic/
 data/auth/
 _pages_test/
+reports/local_validation/*.log
+reports/local_validation/*.pid
+reports/local_validation/*.png
+.env
+.env.*
+backups/
+deploy/wheels/*.whl

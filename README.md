@@ -77,195 +77,59 @@ python -m streamlit run app.py --server.port 8502
 
 После входа откройте `Админ` и создайте реальные аккаунты врачей. Пароли хранятся локально в виде PBKDF2-хэшей.
 
-## Локальные данные кабинета
+## Серверный деплой
 
-При первом запуске приложение создаёт:
+Целевая схема: `med-it.asia` — лендинг, `cabinet.med-it.asia` — все кабинеты.
+Весь стек разворачивается на вашем сервере: Caddy + Streamlit + PostgreSQL.
+Таблицы создаются и обновляются автоматически; база и вложения остаются в
+постоянных Docker-томах после перезапуска.
 
-- `data/clinic/patients.csv`
-- `data/clinic/visits.csv`
-- `data/clinic/attachments.csv`
-- `data/clinic/activity.csv`
-- `data/clinic/attachments/`
-- `data/auth/users.csv`
-
-Эти файлы хранят локальные рабочие данные врача для прототипа. Не загружайте реальные персональные медицинские данные в публичный репозиторий.
-
-Приложение работает в двух режимах:
-
-- **локальный (по умолчанию)** — данные в CSV-файлах выше;
-- **внешняя БД** — включается автоматически, если задан `DATABASE_URL` (Postgres/Supabase) или `TURSO_DATABASE_URL`, или `SUPABASE_DB_URL`.
-
-Таблицы `patients`, `visits`, `attachments`, `activity`, `users` создаются автоматически при первом запуске. Хранилище изолировано функциями `read_csv` / `write_csv`, поэтому весь остальной код один и тот же для обоих режимов.
-
-## Бесплатный деплой (Streamlit Community Cloud + Supabase)
-
-Vercel для этого приложения не подходит: Streamlit требует долгоживущего процесса и WebSocket, а serverless-функции Vercel такое не умеют (плюс лимит размера бандла меньше, чем весят `shap` + `xgboost`). Лендинг из `static/landing/` на Vercel заливается как обычная статика.
-
-Hugging Face Spaces тоже больше не вариант: в конструкторе Space остались только **Static**, **Gradio** и **Docker**, а Docker — платный; Streamlit SDK в списке нет.
-
-### 1. Хостинг: Streamlit Community Cloud (бесплатно)
-
-1. Залейте проект в **GitHub** (можно публичный репозиторий) — папки с данными и секретами уже в `.gitignore`.
-2. `https://share.streamlit.io` → **Create app** → выберите репозиторий, ветку и файл `app.py`.
-3. В **Advanced settings** выберите Python 3.12.
-4. **Settings → Secrets** — вставьте блок TOML из пункта 3 ниже.
-5. Приложение соберётся из `requirements.txt` и получит ссылку вида `https://<app>.streamlit.app`.
-
-Ограничения бесплатного тарифа: 1 ГБ RAM (для `xgboost` + `shap` хватает, модель весит 1.1 МБ) и засыпание приложения после долгого простоя — первый запрос после паузы будет дольше обычного.
-
-### 2. База и файлы: Supabase (бесплатно: Postgres 500 МБ + Storage 1 ГБ)
-
-1. `https://supabase.com` → New project.
-2. Project Settings → Database → Connection string → **Session pooler** — эту строку берите как `DATABASE_URL` (у прямого подключения бывает только IPv6).
-3. Storage → New bucket → имя `attachments`, Public: **off**.
-4. Project Settings → API → скопируйте `Project URL` и ключ `service_role`.
-5. Создавать таблицы вручную не нужно — приложение сделает это само.
-
-### 3. Секреты
-
-Streamlit Community Cloud: **Settings → Secrets**. Локально: `.streamlit/secrets.toml` (файл уже в `.gitignore`).
-
-```toml
-DATABASE_URL = "postgresql://postgres.<ref>:<password>@<host>:5432/postgres"
-SUPABASE_URL = "https://<ref>.supabase.co"
-SUPABASE_SERVICE_KEY = "<service_role key>"
-SUPABASE_BUCKET = "attachments"
+```bash
+python3 tools/setup_server.py
+docker compose up -d --build
 ```
 
-Поведение при отсутствии настроек:
+До запуска направьте DNS обоих доменов на сервер и откройте порты 80/443.
+Первый логин — `admin`, пароль создаётся в серверном `.env` (ADMIN_PASSWORD).
+Полная инструкция, проверка, обновление и резервные копии:
+[docs/deployment.md](docs/deployment.md).
 
-- нет `DATABASE_URL` — работаем на локальных CSV;
-- нет `SUPABASE_URL` / `SUPABASE_SERVICE_KEY` — файлы вложений пишутся в `data/clinic/attachments/` (на эфемерном диске они не переживут перезапуск).
+GitHub Pages оставлен как ручной альтернативный workflow; основной деплой — на сервер.
+Внешние SaaS-сервисы и ручное создание таблиц не требуются.
 
-### Вместо Supabase можно Turso (SQLite, 9 ГБ бесплатно)
+## Локальные данные и проверка
 
-```toml
-TURSO_DATABASE_URL = "libsql://<db>-<user>.turso.io"
-TURSO_AUTH_TOKEN = "<token>"
-```
+Без DATABASE_URL локальное приложение использует CSV в `data/clinic/` и
+`data/auth/`; этот режим предназначен для разработки. Если DATABASE_URL задан,
+ошибка подключения останавливает операцию, а не переключает её на CSV.
+В production (`APP_ENV=production`) обязательно постоянное хранилище.
 
-В `requirements.txt` тогда добавьте `sqlalchemy-libsql`. Файлы вложений Turso не хранит — понадобится отдельное объектное хранилище (Cloudflare R2, 10 ГБ бесплатно).
-
-### Важно про данные
-
-- В GitHub попадают только код, модель и лендинг: `data/` и `.streamlit/secrets.toml` уже в `.gitignore`. Реальные персональные данные в репозиторий не заливайте.
-- Данные кабинета лежат во внешней БД, поэтому перезапуск и пересборка приложения их не теряют.
-- Ключ `service_role` даёт полный доступ к проекту — держите его только в секретах, не в коде и не в репозитории.
-
-## Модель
-
-Обучение использует UCI Maternal Health Risk Data Set из локального архива:
+Локальный лендинг: `python -m http.server 8000 --bind 127.0.0.1 --directory static/landing`.
+Кабинет: `python -m streamlit run app.py`. Кнопка входа с localhost открывает порт 8501.
 
 ```powershell
-maternal+health+risk.zip
+python -m unittest discover -s tests -v
+node --test tests/cabinet-link.test.cjs
+python tools/validate_model.py
 ```
 
-Скрипт обучения:
+В ограниченной Windows-среде Node можно запускать с
+`node --preserve-symlinks-main --preserve-symlinks --test tests/cabinet-link.test.cjs`.
 
-```powershell
-python src\train_model.py
-```
+Тесты используют временные хранилища. Проверяют миграцию, конфликты записи,
+вход, роли, расчёты, историю, вложения, вероятности, SHAP и переходы между доменами.
+Интеграционные тесты БД могут работать с PostgreSQL через TEST_DATABASE_URL;
+они создают и удаляют только свои временные схемы с префиксом `va_test_`.
 
-После обучения появляются:
+## Качество модели
 
-- `models/maternal_risk_xgboost.joblib`
-- `models/metrics.json`
+Модель оценивает три класса общего материнского риска из Maternal Health Risk.
+ИМТ, срок, биомаркеры и анамнез сохраняются для истории и не входят в расчёт.
+Встроенные метрики исходного разбиения (81,28% accuracy) оптимистичны из-за
+совпадающих профилей в обучении и тесте. На пяти разбиениях без пересечения
+профилей средняя accuracy — 66,43%, диапазон — 58–75%.
+Это внутренняя проверка, а не клиническая валидация или прогноз преэклампсии.
 
-## Проверка новых датасетов
-
-Перед добавлением внешнего датасета в обучение:
-
-```powershell
-python src\audit_dataset.py --input "path\to\dataset.csv" --name dataset_name
-```
-
-План и отчёты:
-
-- `docs/external_dataset_audit_plan.md`
-- `reports/dataset_audits/`
-
-## Деплой
-
-Кабинет разворачивается на Streamlit Community Cloud из GitHub (см. раздел «Бесплатный деплой»), а лендинг из `static/landing/` можно отдельно залить на Vercel как статику.
-
-Для Streamlit-деплоя нужен весь проект целиком. Важные файлы:
-
-- `app.py`
-- `.streamlit/config.toml`
-- `requirements.txt`
-- `models/maternal_risk_xgboost.joblib`
-- `static/landing/`
-
-В `.streamlit/config.toml` включён `enableStaticServing = true`, поэтому брендовые ассеты из локального клона доступны кабинету при деплое.
-
-Лендинг отдаётся тем же приложением по адресу:
-
-```
-https://<app>.streamlit.app/app/static/landing/index.html
-```
-
-Например: `https://med-it.streamlit.app/app/static/landing/index.html`. Для публичной витрины лендинг лучше залить отдельно на Vercel как статику (папка `static/landing/` — готовая сборка).
-
-### GitHub Pages: лендинг в корне, кабинет — по ссылкам
-
-Workflow `.github/workflows/pages.yml` публикует папку `static/landing` на GitHub Pages. Включите один раз:
-Settings → Pages → Build and deployment → **Source: GitHub Actions**.
-
-Структура адресов (пример для репозитория `vascular-ai`):
-
-| Адрес | Что открывается |
-| --- | --- |
-| `/vascular-ai/` | лендинг (главная) |
-| `/vascular-ai/login/`, `/cabinet/` | переход на вход в кабинет |
-| `/vascular-ai/intake/` | кабинет, раздел «Новый расчёт» |
-| `/vascular-ai/patients/` | кабинет, раздел «Пациенты» |
-| `/vascular-ai/reports/` | кабинет, раздел «Отчёты» |
-| `/vascular-ai/admin/` | кабинет, админ-панель |
-
-Страницы-переходы — это статические файлы в `static/landing/<slug>/index.html`; они ведут на кабинет с параметром `?page=<slug>`, который приложение применяет один раз и убирает из адреса.
-
-Адрес кабинета задаётся в одном месте — `static/landing/cabinet-link.js` (`window.VASCULARAI_CABINET_URL`). При переходе на другой хостинг правится только эта строка.
-
-GitHub Pages отдаёт статику, поэтому сам кабинет там работать не может (Streamlit нужен Python-процесс и WebSocket) — он остаётся на Streamlit Community Cloud, а Pages служит витриной и точкой входа.
-
-### Куда деплоить сам кабинет
-
-| Вариант | Плюсы | Минусы |
-| --- | --- | --- |
-| Streamlit Community Cloud (текущий) | бесплатно, деплой из GitHub | 1 ГБ RAM, засыпает при простое |
-| Railway / Fly.io (контейнер) | ~$5/мес, всегда включён, больше RAM | платно |
-| Google Cloud Run (контейнер) | оплата по факту, часто укладывается в бесплатный лимит | холодный старт при масштабировании в ноль |
-| VPS + Docker (Hetzner и др.) | полный контроль и много памяти | нужно администрирование |
-
-В проекте лежит готовый `Dockerfile` (и `.dockerignore`), данные уже во внешней БД, поэтому диска контейнеру не нужно:
-
-```powershell
-docker build -t vascularai-cabinet .
-docker run --rm -p 8501:8501 `
-  -e DATABASE_URL="postgresql://postgres.<ref>:<пароль>@aws-0-<регион>.pooler.supabase.com:5432/postgres" `
-  -e SUPABASE_URL="https://<ref>.supabase.co" `
-  -e SUPABASE_SERVICE_KEY="<service_role key>" `
-  -e SUPABASE_BUCKET="attachments" `
-  vascularai-cabinet
-```
-
-Секреты передаются переменными окружения — приложение читает их так же, как `st.secrets`. Команды для хостингов:
-
-```powershell
-# Railway (контейнер будет жить постоянно)
-npm i -g @railway/cli
-railway login
-railway init
-railway up
-
-# Google Cloud Run (оплата по факту использования)
-gcloud run deploy vascularai --source . --region us-central1 --allow-unauthenticated --memory 1Gi
-```
-
-## Производительность
-
-- Чтение таблиц из внешней БД кэшируется на 30 секунд, а любая запись сразу сбрасывает кэш (`read_table_cached` + `_DATA_REVISION`) — это убирает большую часть задержек на сетевых запросах.
-- `shap` больше не нужен: значения TreeSHAP берутся встроенной функцией xgboost (`Booster.predict(..., pred_contribs=True)`) через `prediction_shap_values`. Численно это те же значения (проверено сверкой с `shap.TreeExplainer`), но без `numba`/`llvmlite`: экономится ~8 секунд на импорте и более сотни мегабайт памяти — критично для бесплатного тарифа с 1 ГБ RAM.
-- Если открывать кабинет из другого региона — выбирайте регион проекта Supabase поближе к серверам Streamlit Cloud (обычно США), иначе каждый запрос к базе будет медленнее.
-
-Приложение является демонстрационной системой поддержки решений и не заменяет врача.
+Модель включена в `models/`; обучение вручную: `python src/train_model.py`.
+Перед добавлением данных: `python src/audit_dataset.py --input PATH --name NAME`.
+Отчёты аудита: `reports/dataset_audits/`; локальной проверки: `reports/local_validation/`.

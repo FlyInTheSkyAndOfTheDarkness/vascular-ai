@@ -6,9 +6,18 @@ __pycache__
 *.pyc
 *.pyo
 .streamlit/secrets.toml
+.env
+.env.*
+backups/
+tests/
+requirements-dev.txt
+deploy/*
+!deploy/wheels/
+!deploy/wheels/*.whl
+!deploy/wheels/.gitkeep
+compose*.yaml
 
-# рабочие данные и служебные каталоги в образ не нужны: приложение создаст их само,
-# а сами данные хранятся во внешней БД и Supabase Storage
+# Рабочие данные находятся в постоянных томах сервера, а не в образе.
 data/
 docs/
 reports/

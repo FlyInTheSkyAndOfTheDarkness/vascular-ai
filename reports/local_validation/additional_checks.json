@@ -1,0 +1,8 @@
+{
+  "gestational_week_entered": 25,
+  "gestational_week_saved_in_visit": true,
+  "patient_card_week_after_visit": "25",
+  "systolic_less_than_diastolic_accepted_and_saved": false,
+  "application_exceptions": 0,
+  "evidence": "browser_smoke.json and 37 passing Linux/PostgreSQL tests"
+}

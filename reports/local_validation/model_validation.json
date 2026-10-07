@@ -1,0 +1,212 @@
+{
+  "dataset_rows": 1014,
+  "unique_feature_profiles": 416,
+  "duplicate_rows": 562,
+  "conflicting_feature_profiles": 35,
+  "class_order": [
+    "low risk",
+    "mid risk",
+    "high risk"
+  ],
+  "saved_model_holdout": {
+    "accuracy": 0.812807881773399,
+    "balanced_accuracy": 0.8203617155524286,
+    "confusion_matrix": [
+      [
+        65,
+        16,
+        0
+      ],
+      [
+        13,
+        49,
+        5
+      ],
+      [
+        2,
+        2,
+        51
+      ]
+    ]
+  },
+  "saved_metrics_match": true,
+  "holdout_rows": 203,
+  "holdout_rows_with_training_feature_match": 166,
+  "holdout_seen_profiles": {
+    "accuracy": 0.8433734939759037,
+    "balanced_accuracy": 0.854971115840681,
+    "confusion_matrix": [
+      [
+        47,
+        8,
+        0
+      ],
+      [
+        11,
+        49,
+        5
+      ],
+      [
+        0,
+        2,
+        44
+      ]
+    ]
+  },
+  "holdout_unseen_profiles": {
+    "accuracy": 0.6756756756756757,
+    "balanced_accuracy": 0.4900284900284901,
+    "confusion_matrix": [
+      [
+        18,
+        8,
+        0
+      ],
+      [
+        2,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        7
+      ]
+    ]
+  },
+  "group_holdouts": [
+    {
+      "accuracy": 0.5825242718446602,
+      "balanced_accuracy": 0.5923971918569478,
+      "confusion_matrix": [
+        [
+          69,
+          16,
+          2
+        ],
+        [
+          51,
+          20,
+          5
+        ],
+        [
+          3,
+          9,
+          31
+        ]
+      ],
+      "seed": 42,
+      "train_rows": 808,
+      "test_rows": 206,
+      "feature_overlap": 0
+    },
+    {
+      "accuracy": 0.6404494382022472,
+      "balanced_accuracy": 0.6408929477422628,
+      "confusion_matrix": [
+        [
+          56,
+          17,
+          0
+        ],
+        [
+          31,
+          24,
+          5
+        ],
+        [
+          3,
+          8,
+          34
+        ]
+      ],
+      "seed": 43,
+      "train_rows": 836,
+      "test_rows": 178,
+      "feature_overlap": 0
+    },
+    {
+      "accuracy": 0.6613756613756614,
+      "balanced_accuracy": 0.6638455591715607,
+      "confusion_matrix": [
+        [
+          79,
+          5,
+          0
+        ],
+        [
+          44,
+          14,
+          9
+        ],
+        [
+          1,
+          5,
+          32
+        ]
+      ],
+      "seed": 44,
+      "train_rows": 825,
+      "test_rows": 189,
+      "feature_overlap": 0
+    },
+    {
+      "accuracy": 0.7543859649122807,
+      "balanced_accuracy": 0.7244858037111558,
+      "confusion_matrix": [
+        [
+          55,
+          14,
+          2
+        ],
+        [
+          9,
+          17,
+          2
+        ],
+        [
+          0,
+          15,
+          57
+        ]
+      ],
+      "seed": 45,
+      "train_rows": 843,
+      "test_rows": 171,
+      "feature_overlap": 0
+    },
+    {
+      "accuracy": 0.6827956989247311,
+      "balanced_accuracy": 0.6608288463741551,
+      "confusion_matrix": [
+        [
+          72,
+          13,
+          2
+        ],
+        [
+          22,
+          23,
+          11
+        ],
+        [
+          6,
+          5,
+          32
+        ]
+      ],
+      "seed": 46,
+      "train_rows": 828,
+      "test_rows": 186,
+      "feature_overlap": 0
+    }
+  ],
+  "group_holdout_mean_accuracy": 0.6643062070519161,
+  "group_holdout_mean_balanced_accuracy": 0.6564900697712165,
+  "limitations": [
+    "Group holdouts keep identical six-feature profiles together; patient identifiers are unavailable.",
+    "Five overlapping random holdouts are a sensitivity check, not independent external validation.",
+    "The target contains low/mid/high maternal risk labels, not preeclampsia outcomes.",
+    "The shipped model and its metrics were not replaced."
+  ]
+}

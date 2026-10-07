@@ -7,6 +7,7 @@ import re
 import secrets
 import time
 import uuid
+from urllib.parse import quote
 from datetime import datetime, timedelta
 from html import escape
 from pathlib import Path
@@ -117,6 +118,7 @@ VISIT_COLUMNS = [
     "sflt1",
     "map_value",
     "anamnesis",
+    "gestational_week",
 ]
 
 ATTACHMENT_COLUMNS = [
@@ -2306,6 +2308,23 @@ def secret_value(name: str, default: str = "") -> str:
     return text or default
 
 
+class StorageError(RuntimeError):
+    """A failed storage operation must never be presented as a successful save."""
+
+
+def production_mode() -> bool:
+    return secret_value("APP_ENV", "development").lower() == "production"
+
+
+def check_deployment_settings() -> None:
+    if not production_mode():
+        return
+    if not database_url():
+        raise StorageError("Для production задайте DATABASE_URL постоянной базы данных.")
+    if not attachments_in_cloud() and secret_value("PERSISTENT_LOCAL_STORAGE") != "1":
+        raise StorageError("Настройте Supabase Storage или постоянный диск для вложений (PERSISTENT_LOCAL_STORAGE=1).")
+
+
 def database_url() -> str:
     """DSN внешней БД; пустая строка — работаем на локальных CSV."""
     url = secret_value("DATABASE_URL") or secret_value("SUPABASE_DB_URL") or secret_value("TURSO_DATABASE_URL")
@@ -2330,7 +2349,8 @@ def database_url() -> str:
 def db_engine(url: str):
     from sqlalchemy import create_engine
 
-    return create_engine(url, pool_pre_ping=True, future=True)
+    options = {"connect_timeout": 10} if url.startswith("postgresql") else {}
+    return create_engine(url, pool_pre_ping=True, future=True, connect_args=options)
 
 
 # Состояние хранилища живёт в session_state: скрипт исполняется заново на каждой перерисовке,
@@ -2383,16 +2403,14 @@ def short_db_error(error: Exception) -> str:
 
 
 def engine_or_none():
-    """Движок внешней БД, только если подключение действительно работает; иначе None (режим CSV)."""
+    """CSV only when no database is configured; database failures stop the operation."""
     from sqlalchemy import text
 
     url = database_url()
     if not url:
         return None
     status = db_status()
-    if status.get("url") == url:
-        if status.get("ok") is False:
-            return None
+    if status.get("url") == url and status.get("ok") is True:
         return db_engine(url)
     try:
         engine = db_engine(url)
@@ -2401,13 +2419,7 @@ def engine_or_none():
     except Exception as error:
         reason = short_db_error(error)
         status.update({"url": url, "ok": False, "error": reason})
-        if not st.session_state.get("_db_warning_shown"):
-            st.session_state["_db_warning_shown"] = True
-            st.warning(
-                "Внешняя БД недоступна, приложение работает на локальных CSV "
-                f"(данные не будут переживать перезапуск). Причина: {reason}"
-            )
-        return None
+        raise StorageError("База данных недоступна. Данные не записаны; повторите попытку после восстановления подключения.") from error
     status.update({"url": url, "ok": True, "error": ""})
     return engine
 
@@ -2424,13 +2436,22 @@ def table_name(path: Path) -> str:
 
 def ensure_db_table(conn, table: str, columns: list[str]) -> None:
     ready = tables_ready()
-    if table in ready:
+    schema_key = (str(conn.engine.url), table, tuple(columns))
+    if schema_key in ready:
         return
-    from sqlalchemy import text
+    from sqlalchemy import inspect, text
 
     definition = ", ".join(f'"{column}" TEXT' for column in columns)
     conn.execute(text(f'CREATE TABLE IF NOT EXISTS "{table}" ({definition})'))
-    ready.add(table)
+    existing = {column["name"] for column in inspect(conn).get_columns(table)}
+    for column in columns:
+        if column not in existing:
+            conn.execute(text(f'ALTER TABLE "{table}" ADD COLUMN "{column}" TEXT'))
+    key = columns[0]
+    conn.execute(text(f'CREATE UNIQUE INDEX IF NOT EXISTS "uq_{table}_{key}" ON "{table}" ("{key}")'))
+    if table == "users":
+        conn.execute(text('CREATE UNIQUE INDEX IF NOT EXISTS "uq_users_username" ON "users" ("username")'))
+    ready.add(schema_key)
 
 
 def attachments_in_cloud() -> bool:
@@ -2452,7 +2473,7 @@ def storage_label() -> str:
 
 def storage_hint() -> str:
     if database_url() and db_status().get("ok") is False:
-        return "Хранилище: CSV (внешняя БД недоступна)"
+        return "Хранилище недоступно; запись приостановлена"
     files = "Supabase Storage" if attachments_in_cloud() else "локальные файлы"
     return f"Хранилище: {storage_label()} · {files}"
 
@@ -2478,13 +2499,13 @@ def upload_attachment_to_cloud(relative_path: str, data: bytes) -> None:
     base = secret_value("SUPABASE_URL").rstrip("/")
     bucket = secret_value("SUPABASE_BUCKET", ATTACHMENT_BUCKET) or ATTACHMENT_BUCKET
     response = requests.post(
-        f"{base}/storage/v1/object/{bucket}/{relative_path}",
+        f"{base}/storage/v1/object/{quote(bucket, safe='')}/{quote(relative_path, safe='/')}",
         data=data,
         timeout=45,
         headers={
             "Authorization": f"Bearer {secret_value('SUPABASE_SERVICE_KEY')}",
             "Content-Type": "application/octet-stream",
-            "x-upsert": "true",
+            "x-upsert": "false",
         },
     )
     response.raise_for_status()
@@ -2495,6 +2516,9 @@ def ensure_store() -> None:
     if engine is not None:
         try:
             with engine.begin() as conn:
+                if conn.dialect.name == "postgresql":
+                    from sqlalchemy import text
+                    conn.execute(text("SELECT pg_advisory_xact_lock(hashtext('vascularai_schema'))"))
                 ensure_db_table(conn, table_name(PATIENTS_PATH), PATIENT_COLUMNS)
                 ensure_db_table(conn, table_name(VISITS_PATH), VISIT_COLUMNS)
                 ensure_db_table(conn, table_name(ATTACHMENTS_PATH), ATTACHMENT_COLUMNS)
@@ -2503,7 +2527,8 @@ def ensure_store() -> None:
             return
         except Exception as error:
             db_status().update({"url": database_url(), "ok": False, "error": short_db_error(error)})
-        return
+            tables_ready().clear()
+            raise StorageError("Не удалось подготовить схему базы данных. Проверьте права подключения.") from error
 
     CLINIC_DIR.mkdir(parents=True, exist_ok=True)
     ATTACHMENTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -2527,8 +2552,7 @@ def read_csv(path: Path, columns: list[str]) -> pd.DataFrame:
         try:
             return read_table_cached(url_cache_key(), table, tuple(columns), data_revision())
         except Exception as error:
-            st.error(f"Не удалось прочитать таблицу «{table}» из внешней БД: {short_db_error(error)}")
-            return pd.DataFrame(columns=columns)
+            raise StorageError(f"Не удалось прочитать таблицу «{table}». Повторите попытку.") from error
 
     ensure_store()
     df = pd.read_csv(path, dtype=str).fillna("")
@@ -2546,6 +2570,7 @@ def data_revision() -> int:
 
 def bump_data_revision() -> None:
     state_obj("_db_revision", lambda: {"value": 0})["value"] = data_revision() + 1
+    read_table_cached.clear()
 
 
 @st.cache_data(show_spinner=False, ttl=30)
@@ -2561,7 +2586,9 @@ def read_table_cached(cache_key: str, table: str, columns: tuple[str, ...], revi
     for column in columns:
         if column not in frame.columns:
             frame[column] = ""
-    return frame[list(columns)].astype(str)
+    frame = frame[list(columns)].astype(str)
+    frame.attrs["original_rows"] = {row[columns[0]]: row for row in frame.to_dict("records")}
+    return frame
 
 
 def write_csv(df: pd.DataFrame, path: Path, columns: list[str]) -> None:
@@ -2571,18 +2598,52 @@ def write_csv(df: pd.DataFrame, path: Path, columns: list[str]) -> None:
 
         table = table_name(path)
         payload = df[columns].fillna("").astype(str)
+        original_rows = df.attrs.get("original_rows", {})
+        key = columns[0]
         try:
             with engine.begin() as conn:
                 ensure_db_table(conn, table, columns)
-                conn.execute(text(f'DELETE FROM "{table}"'))
-                payload.to_sql(table, conn, if_exists="append", index=False)
+                for row in payload.to_dict("records"):
+                    original = original_rows.get(row[key])
+                    if original is None:
+                        pd.DataFrame([row]).to_sql(table, conn, if_exists="append", index=False)
+                        continue
+                    changed = [column for column in columns if row[column] != original[column]]
+                    if not changed:
+                        continue
+                    assignments = ", ".join(f'"{column}" = :new_{column}' for column in changed)
+                    conditions = " AND ".join(f'COALESCE("{column}", \'\') = :old_{column}' for column in changed)
+                    params = {"key": row[key]}
+                    params.update({f"new_{column}": row[column] for column in changed})
+                    params.update({f"old_{column}": original[column] for column in changed})
+                    updated = conn.execute(text(f'UPDATE "{table}" SET {assignments} WHERE "{key}" = :key AND {conditions}'), params)
+                    if updated.rowcount != 1:
+                        raise StorageError("Запись уже изменена в другой сессии. Обновите страницу и повторите действие.")
             bump_data_revision()
+        except StorageError:
+            raise
         except Exception as error:
-            st.error(f"Не удалось записать таблицу «{table}» во внешнюю БД: {short_db_error(error)}")
+            raise StorageError(f"Не удалось сохранить таблицу «{table}». Изменения не записаны.") from error
         return
 
     path.parent.mkdir(parents=True, exist_ok=True)
     df[columns].to_csv(path, index=False, encoding="utf-8")
+
+
+def append_row(row: dict[str, object], path: Path, columns: list[str]) -> None:
+    engine = engine_or_none()
+    payload = pd.DataFrame([row]).reindex(columns=columns).fillna("")
+    if engine is not None:
+        try:
+            with engine.begin() as conn:
+                ensure_db_table(conn, table_name(path), columns)
+                payload.astype(str).to_sql(table_name(path), conn, if_exists="append", index=False)
+            bump_data_revision()
+        except Exception as error:
+            raise StorageError("Не удалось добавить запись. Проверьте, что ID не занят, и повторите попытку.") from error
+    else:
+        frame = pd.concat([read_csv(path, columns), payload], ignore_index=True)
+        write_csv(frame, path, columns)
 
 
 def hash_password(password: str) -> str:
@@ -2628,10 +2689,13 @@ def verify_password(password: str, password_hash: str) -> bool:
 
 
 def seed_admin_row() -> dict[str, str]:
+    password = secret_value("ADMIN_PASSWORD", "" if production_mode() else DEFAULT_ADMIN_PASSWORD)
+    if not password or (production_mode() and (len(password) < 12 or password == DEFAULT_ADMIN_PASSWORD)):
+        raise StorageError("Задайте ADMIN_PASSWORD длиной не менее 12 символов для первого администратора.")
     return {
         "user_id": uuid.uuid4().hex[:10],
         "username": "admin",
-        "password_hash": hash_password(DEFAULT_ADMIN_PASSWORD),
+        "password_hash": hash_password(password),
         "full_name": "Главный администратор",
         "role": "admin",
         "status": "active",
@@ -2678,6 +2742,8 @@ def is_valid_username(username: str) -> bool:
 
 
 def bootstrap_credentials_visible() -> bool:
+    if production_mode() or secret_value("ADMIN_PASSWORD"):
+        return False
     users = users_df()
     if len(users) != 1:
         return False
@@ -2822,8 +2888,7 @@ def create_user_account(username: str, full_name: str, role: str, status: str, p
         "session_hash": "",
         "session_expires_at": "",
     }
-    users = pd.concat([users, pd.DataFrame([row])], ignore_index=True)
-    write_users(users)
+    append_row(row, USERS_PATH, USER_COLUMNS)
     log_event(
         "account_created",
         target=username,
@@ -2862,9 +2927,7 @@ def log_event(action: str, target: str = "", details: str = "", actor: dict[str,
         "target": target,
         "details": details,
     }
-    frame = activity_df()
-    frame = pd.concat([frame, pd.DataFrame([row])], ignore_index=True)
-    write_csv(frame, ACTIVITY_PATH, ACTIVITY_COLUMNS)
+    append_row(row, ACTIVITY_PATH, ACTIVITY_COLUMNS)
 
 
 def next_patient_id(patients: pd.DataFrame) -> str:
@@ -2889,21 +2952,15 @@ def patient_label(row: pd.Series) -> str:
 
 
 def append_patient(row: dict[str, object]) -> None:
-    df = patients_df()
-    df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
-    write_csv(df, PATIENTS_PATH, PATIENT_COLUMNS)
+    append_row(row, PATIENTS_PATH, PATIENT_COLUMNS)
 
 
 def append_visit(row: dict[str, object]) -> None:
-    df = visits_df()
-    df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
-    write_csv(df, VISITS_PATH, VISIT_COLUMNS)
+    append_row(row, VISITS_PATH, VISIT_COLUMNS)
 
 
 def append_attachment(row: dict[str, object]) -> None:
-    df = attachments_df()
-    df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
-    write_csv(df, ATTACHMENTS_PATH, ATTACHMENT_COLUMNS)
+    append_row(row, ATTACHMENTS_PATH, ATTACHMENT_COLUMNS)
 
 
 @st.cache_resource
@@ -2946,6 +3003,13 @@ def predict_risk(values: dict[str, float], bundle: dict) -> dict[str, object]:
     model = bundle["model"]
     feature_names = bundle["feature_names"]
     class_names = bundle["class_names"]
+    for feature in feature_names:
+        value = float(values[feature])
+        meta = FEATURE_META[feature]
+        if not np.isfinite(value) or not meta["min"] <= value <= meta["max"]:
+            raise ValueError(f"{meta['label']}: допустимо от {meta['min']} до {meta['max']} {meta['unit']}.")
+    if values["SystolicBP"] <= values["DiastolicBP"]:
+        raise ValueError("Систолическое давление должно быть выше диастолического. Проверьте введённые значения.")
     patient = pd.DataFrame([{feature: values[feature] for feature in feature_names}], columns=feature_names)
     probabilities = model.predict_proba(patient)[0]
     class_index = int(np.argmax(probabilities))
@@ -3580,9 +3644,11 @@ def render_home_page(bundle: dict, user: dict[str, str]) -> None:
             metrics = bundle.get("metrics", {})
             card_head("Статус модели", "XGBoost · maternal health risk")
             st.markdown(
-                "<p class=\"cell-muted\">Accuracy "
+                "<p class=\"cell-muted\">Исходное разбиение: accuracy "
                 f"{metrics.get('accuracy', 0):.1%}, balanced accuracy {metrics.get('balanced_accuracy', 0):.1%}. "
-                "SHAP-факторы показываются после расчёта конкретного визита.</p>",
+                "В нём есть совпадающие профили обучения и теста. На пяти разбиениях без пересечения "
+                "профилей средняя accuracy — 66,43%. Это внутренняя проверка общего материнского риска, "
+                "не клиническая валидация преэклампсии. SHAP-факторы показываются после расчёта визита.</p>",
                 unsafe_allow_html=True,
             )
 
@@ -3611,6 +3677,8 @@ def render_feature_input(feature: str, value: float | None = None) -> float:
         format=meta["format"],
         label_visibility="collapsed",
         key=f"input_{feature}",
+        on_change=st.session_state.pop,
+        args=("intake_result", None),
     )
 
 
@@ -3684,6 +3752,10 @@ def render_result(result: dict[str, object], bundle: dict) -> None:
     render_probability_rows(bundle["class_names"], probabilities)
     section_label("Факторы", "SHAP")
     render_factors(bundle["feature_names"], result["patient"], np.asarray(result["shap_values"], dtype=float))
+    with st.expander("Показатели, использованные в расчёте"):
+        for feature in bundle["feature_names"]:
+            st.write(f"{FEATURE_META[feature]['label']}: {format_value(feature, float(result['patient'].iloc[0][feature]))}")
+        st.caption("Проценты относятся к классам модели Maternal Health Risk, а не к вероятности преэклампсии.")
 
 
 def create_patient_form(default_doctor: str = "") -> None:
@@ -3763,7 +3835,9 @@ def render_intake_page(bundle: dict, user: dict[str, str]) -> None:
     with caption_col:
         st.markdown('<div class="progress-caption">Шаг 1 из 1</div>', unsafe_allow_html=True)
 
-    page_head("Новый расчёт риска преэклампсии", "Все данные из рутинного первого скрининга (11–13+6 нед)")
+    page_head("Новый расчёт материнского риска", "Оценка по шести показателям модели Maternal Health Risk")
+    st.caption("На прогноз влияют возраст, верхнее и нижнее давление, сахар, температура и пульс. "
+               "Остальные поля сохраняются для истории визита и не меняют результат модели.")
 
     left, right = st.columns([0.98, 1.02], gap="large")
 
@@ -3772,6 +3846,11 @@ def render_intake_page(bundle: dict, user: dict[str, str]) -> None:
         patient_row = patients.loc[patients["patient_id"] == selected_patient].iloc[0]
         default_age = safe_int(patient_row["age"], int(FEATURE_META["Age"]["default"]))
         default_week = safe_int(patient_row["gestational_week"], 28)
+        if st.session_state.get("intake_active_patient") != selected_patient:
+            for feature in bundle["feature_names"]:
+                st.session_state.pop(f"input_{feature}", None)
+            st.session_state.pop("intake_result", None)
+            st.session_state["intake_active_patient"] = selected_patient
 
         st.markdown('<div class="form-section">Антропометрия и витальные показатели</div>', unsafe_allow_html=True)
         c1, c2 = st.columns(2)
@@ -3793,7 +3872,7 @@ def render_intake_page(bundle: dict, user: dict[str, str]) -> None:
                 placeholder="24.5",
             )
         with week_col:
-            labeled_number_input(
+            gestational_week = labeled_number_input(
                 "Срок беременности",
                 unit="нед",
                 hint="Срок на момент расчёта",
@@ -3802,7 +3881,7 @@ def render_intake_page(bundle: dict, user: dict[str, str]) -> None:
                 maximum=45,
             )
 
-        st.markdown('<div class="form-section">Биомаркеры (при наличии)</div>', unsafe_allow_html=True)
+        st.markdown('<div class="form-section">Биомаркеры (для истории, не входят в расчёт)</div>', unsafe_allow_html=True)
         b1, b2 = st.columns(2)
         with b1:
             plgf = labeled_text_input("PLGF", unit="пг/мл", hint="Плацентарный фактор роста", placeholder="—")
@@ -3842,7 +3921,12 @@ def render_intake_page(bundle: dict, user: dict[str, str]) -> None:
             "BodyTemp": float(body_temp),
             "HeartRate": float(heart_rate),
         }
-        result = predict_risk(values, bundle)
+        try:
+            result = predict_risk(values, bundle)
+        except ValueError as error:
+            st.session_state.pop("intake_result", None)
+            st.error(str(error))
+            return
         st.session_state["intake_result"] = result
         if attach_visit:
             probabilities = np.asarray(result["probabilities"], dtype=float)
@@ -3871,6 +3955,7 @@ def render_intake_page(bundle: dict, user: dict[str, str]) -> None:
                     "sflt1": sflt1.strip(),
                     "map_value": map_value.strip(),
                     "anamnesis": ", ".join(anamnesis_notes),
+                    "gestational_week": str(gestational_week),
                 }
             )
             log_event(
@@ -3907,17 +3992,23 @@ def render_intake_page(bundle: dict, user: dict[str, str]) -> None:
 
 
 def save_uploaded_attachment(patient_id: str, uploaded_file, note: str) -> None:
+    if not (patients_df()["patient_id"] == str(patient_id)).any():
+        raise StorageError("Карта пациентки не найдена.")
     safe_name = re.sub(r"[^a-zA-Z0-9._-]+", "_", uploaded_file.name).strip("_") or "attachment"
-    relative = f"{patient_id}/{datetime.now().strftime('%Y%m%d_%H%M%S')}_{safe_name}"
+    patient_folder = hashlib.sha256(str(patient_id).encode("utf-8")).hexdigest()[:24]
+    relative = f"{patient_folder}/{uuid.uuid4().hex}_{safe_name}"
     data = bytes(uploaded_file.getbuffer())
-    if attachments_in_cloud():
-        upload_attachment_to_cloud(relative, data)
-        stored_path = f"cloud:{relative}"
-    else:
-        local_path = ATTACHMENTS_DIR / relative
-        local_path.parent.mkdir(parents=True, exist_ok=True)
-        local_path.write_bytes(data)
-        stored_path = str(local_path.relative_to(PROJECT_ROOT))
+    try:
+        if attachments_in_cloud():
+            upload_attachment_to_cloud(relative, data)
+            stored_path = f"cloud:{relative}"
+        else:
+            local_path = ATTACHMENTS_DIR / relative
+            local_path.parent.mkdir(parents=True, exist_ok=True)
+            local_path.write_bytes(data)
+            stored_path = str(local_path.relative_to(PROJECT_ROOT))
+    except Exception as error:
+        raise StorageError("Не удалось сохранить вложение. Повторите попытку.") from error
     append_attachment(
         {
             "attachment_id": uuid.uuid4().hex[:10],
@@ -3943,9 +4034,11 @@ CHART_ACCENT = "#bd6875"
 def latest_visits_by_patient(visits: pd.DataFrame) -> pd.DataFrame:
     columns = ["patient_id", "recorded_at", "risk_label", "risk_probability", "top_factor"]
     if visits.empty:
-        return pd.DataFrame(columns=columns)
+        return pd.DataFrame(columns=columns + ["visit_gestational_week"])
     latest = visits.sort_values("recorded_at").groupby("patient_id", as_index=False).tail(1)
-    return latest[columns]
+    result = latest[columns].copy()
+    result["visit_gestational_week"] = latest.get("gestational_week", pd.Series("", index=latest.index))
+    return result
 
 
 def render_patient_rows(frame: pd.DataFrame, key_prefix: str) -> None:
@@ -4014,6 +4107,9 @@ def render_patients_page(user: dict[str, str]) -> None:
 
     visits = visits_df()
     table = patients.merge(latest_visits_by_patient(visits), on="patient_id", how="left").fillna("")
+    table["gestational_week"] = table["visit_gestational_week"].where(
+        table["visit_gestational_week"] != "", table["gestational_week"]
+    )
 
     search_col, risk_col, week_col, period_col = st.columns([1.15, 1.35, 1.15, 1.05], vertical_alignment="center")
     with search_col:
@@ -4138,6 +4234,8 @@ def render_patient_card(user: dict[str, str], patient_id: str) -> None:
     created = str(row.get("created_at") or "")[:10]
     anamnesis = str(row.get("anamnesis") or "").strip() or "не указан"
     bmi = str(row.get("bmi") or "").strip() or "—"
+    latest_week = str(visits.iloc[0].get("gestational_week") or "") if not visits.empty else ""
+    current_week = latest_week or str(row.get("gestational_week") or "—")
 
     st.markdown(
         f"""
@@ -4152,7 +4250,7 @@ def render_patient_card(user: dict[str, str], patient_id: str) -> None:
             <div class="stat-row">
                 <div><span>Возраст</span><strong>{escape(str(row.get("age") or "—"))} лет</strong></div>
                 <div><span>ИМТ</span><strong>{escape(bmi)}{' кг/м²' if bmi != '—' else ''}</strong></div>
-                <div><span>Текущий срок</span><strong>{escape(str(row.get("gestational_week") or "—"))} нед</strong></div>
+                <div><span>Текущий срок</span><strong>{escape(current_week)} нед</strong></div>
                 <div><span>Анамнез</span><strong>{escape(anamnesis)}</strong></div>
                 <div><span>Расчётов</span><strong>{len(visits)}</strong></div>
             </div>
@@ -4165,7 +4263,7 @@ def render_patient_card(user: dict[str, str], patient_id: str) -> None:
         st.markdown(f'<div class="clinical-note">{escape(str(row["note"]))}</div>', unsafe_allow_html=True)
 
     with st.container(border=True):
-        card_head("Динамика риска по неделям", "доля вероятности высокого риска")
+        card_head("Динамика риска по датам", "доля вероятности высокого риска")
         render_risk_trend(visits)
 
     left, right = st.columns([1.15, 0.85], gap="large")
@@ -4197,7 +4295,9 @@ def render_patient_card(user: dict[str, str], patient_id: str) -> None:
 
 def render_risk_trend(visits: pd.DataFrame) -> None:
     frame = visits.copy()
-    frame["score"] = pd.to_numeric(frame["risk_probability"], errors="coerce")
+    frame["score"] = pd.to_numeric(
+        frame.get("prob_high", pd.Series(index=frame.index, dtype=float)), errors="coerce"
+    )
     frame["дата"] = pd.to_datetime(frame["recorded_at"], errors="coerce")
     frame = frame.loc[frame["score"].notna() & frame["дата"].notna()].sort_values("дата")
     if frame.empty:
@@ -4413,7 +4513,7 @@ def visits_with_patient_context() -> pd.DataFrame:
     visits = visits_df()
     patients = patients_df()
     if visits.empty:
-        return visits
+        return visits.reindex(columns=[*visits.columns, "initials", "doctor", "age"])
     context = patients[["patient_id", "initials", "doctor", "age", "gestational_week"]].copy()
     joined = visits.merge(context, on="patient_id", how="left", suffixes=("", "_patient"))
     for column in ["initials", "doctor", "age", "gestational_week"]:
@@ -5025,12 +5125,15 @@ def main() -> None:
     started = time.perf_counter()
     try:
         app_body()
+    except StorageError as error:
+        st.error(str(error))
     finally:
         st.session_state["_last_run_ms"] = int((time.perf_counter() - started) * 1000)
 
 
 def app_body() -> None:
     add_style()
+    check_deployment_settings()
     ensure_store()
     ensure_auth_store()
 

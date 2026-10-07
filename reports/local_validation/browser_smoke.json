@@ -1,0 +1,62 @@
+{
+  "account": "qa_8b4781ae",
+  "checks": [
+    "landing_to_admin_login_via_proxy_and_websocket",
+    "create_doctor_and_login",
+    "three_different_live_calculations",
+    "invalid_pressure_rejected",
+    "visit_week_and_attachment_upload",
+    "patients_and_reports"
+  ],
+  "results": [
+    {
+      "input": [
+        15,
+        78,
+        49,
+        7.5,
+        98,
+        77
+      ],
+      "class": "Низкий риск",
+      "probabilities": [
+        "100%",
+        "0%",
+        "0%"
+      ]
+    },
+    {
+      "input": [
+        29,
+        130,
+        70,
+        6.7,
+        98,
+        78
+      ],
+      "class": "Средний риск",
+      "probabilities": [
+        "1%",
+        "99%",
+        "0%"
+      ]
+    },
+    {
+      "input": [
+        25,
+        140,
+        100,
+        15,
+        98.6,
+        70
+      ],
+      "class": "Высокий риск",
+      "probabilities": [
+        "0%",
+        "0%",
+        "100%"
+      ]
+    }
+  ],
+  "passed": true
+}

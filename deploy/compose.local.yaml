@@ -1,0 +1,14 @@
+# Isolated local deployment test; no public ports, domains or certificates.
+services:
+  db:
+    ports:
+      - "127.0.0.1:55438:5432"
+  web:
+    ports: !override
+      - "127.0.0.1:18080:18080"
+    volumes:
+      - ./deploy/Caddyfile.local:/etc/caddy/Caddyfile:ro
+  cabinet:
+    environment:
+      STREAMLIT_BROWSER_SERVER_ADDRESS: cabinet.med-it.localhost
+      STREAMLIT_BROWSER_SERVER_PORT: "18080"
