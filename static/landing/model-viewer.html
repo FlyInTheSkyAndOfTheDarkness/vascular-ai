@@ -66,17 +66,25 @@
       height: 100%;
       inset: 0;
       object-fit: contain;
-      opacity: 0.16;
+      opacity: 1;
       padding: 2.4rem;
       position: absolute;
       transition: opacity 360ms ease;
       width: 100%;
     }
 
-    .ready .poster,
-    .fallback .poster {
+    .ready .poster {
       opacity: 0;
     }
+
+    .canvas-wrap { opacity: 0; transition: opacity 360ms ease; }
+    .ready .canvas-wrap { opacity: 1; }
+    .retry {
+      position: absolute; top: 3.25rem; right: 0.75rem; z-index: 3;
+      border: 1px solid var(--line); border-radius: 999px; padding: 0.45rem 0.8rem;
+      background: var(--panel); color: var(--ink); cursor: pointer;
+    }
+    .retry[hidden] { display: none; }
 
     .label {
       bottom: 0.85rem;
@@ -159,7 +167,8 @@
     <div class="canvas-wrap" id="wrap">
       <canvas id="canvas" aria-label="3D модель развития плода и сосудистой системы"></canvas>
     </div>
-    <div class="status" id="status">Загрузка 3D</div>
+    <div class="status" id="status" role="status" aria-live="polite">Загрузка 3D</div>
+    <button class="retry" id="retry" type="button" hidden>Повторить загрузку</button>
     <div class="label">
       <span>VascularAI</span>
       <strong>Maternal risk model</strong>
@@ -186,16 +195,14 @@
       d as MeshBasicMaterial,
       e as AdditiveBlending,
       f as GLTFLoader,
-      g as Color,
-      h as MathUtils,
-      i as MeshPhysicalMaterial,
-      j as SphereGeometry
+      g as Color
     } from "./assets/three-DBFNw0_3.js";
 
     const viewer = document.getElementById("viewer");
     const status = document.getElementById("status");
     const wrap = document.getElementById("wrap");
     const canvas = document.getElementById("canvas");
+    const retry = document.getElementById("retry");
 
     let renderer;
     try {
@@ -208,6 +215,7 @@
     } catch {
       viewer.className = "viewer fallback";
       status.textContent = "3D недоступно";
+      // Keep the actual model poster visible when WebGL is unavailable.
       throw new Error("WebGL unavailable");
     }
 
@@ -279,34 +287,6 @@
       return { glow, mesh };
     });
 
-    function fallbackEmbryo() {
-      const group = new Group();
-      const material = new MeshPhysicalMaterial({
-        clearcoat: 0.12,
-        color: 0xe9aeb1,
-        ior: 1.33,
-        metalness: 0,
-        roughness: 0.42,
-        sheen: 0.35,
-        sheenColor: 0xfff0ed,
-        thickness: 0.34,
-        transmission: 0.07
-      });
-      const addSphere = (position, scale) => {
-        const mesh = new Mesh(new SphereGeometry(1, 40, 28), material);
-        mesh.position.fromArray(position);
-        mesh.scale.fromArray(scale);
-        group.add(mesh);
-      };
-      addSphere([-0.16, 0.82, 0], [0.58, 0.62, 0.50]);
-      addSphere([0.30, 0.62, 0.08], [0.30, 0.28, 0.34]);
-      addSphere([-0.28, 0.02, 0], [0.37, 0.54, 0.31]);
-      addSphere([-0.10, -0.42, 0], [0.37, 0.33, 0.35]);
-      addSphere([0.24, -0.66, 0.16], [0.29, 0.24, 0.22]);
-      addSphere([0.16, -0.88, 0.22], [0.25, 0.14, 0.16]);
-      return group;
-    }
-
     function fitLoadedModel(model) {
       model.position.set(0, -0.02, 0);
       model.rotation.set(0.02, 0.12, -0.035);
@@ -314,24 +294,50 @@
       return model;
     }
 
-    let model = fallbackEmbryo();
-    root.add(model);
-
-    new GLTFLoader().load(
-      "models/embryo.glb",
-      (gltf) => {
-        root.remove(model);
-        model = fitLoadedModel(gltf.scene);
-        root.add(model);
+    // Show the real model's poster until its GLB is ready; never draw a substitute.
+    async function loadModel() {
+      retry.hidden = true;
+      viewer.className = "viewer loading";
+      status.textContent = "Загрузка 3D…";
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 120000);
+      try {
+        const modelUrl = new URL("models/embryo.glb", document.baseURI);
+        const response = await fetch(modelUrl, { signal: controller.signal });
+        if (!response.ok) throw new Error("Model HTTP " + response.status);
+        const total = Number(response.headers.get("Content-Length"));
+        const reader = response.body.getReader();
+        const chunks = [];
+        let received = 0;
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          chunks.push(value);
+          received += value.byteLength;
+          status.textContent = total > 0
+            ? "Загрузка 3D: " + Math.min(99, Math.round(received / total * 100)) + "%"
+            : "Загрузка 3D…";
+        }
+        const bytes = new Uint8Array(received);
+        let offset = 0;
+        for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+        status.textContent = "Подготовка 3D…";
+        const gltf = await new Promise((resolve, reject) => {
+          new GLTFLoader().parse(bytes.buffer, new URL(".", modelUrl).href, resolve, reject);
+        });
+        root.add(fitLoadedModel(gltf.scene));
         viewer.className = "viewer ready";
         status.textContent = "3D готово";
-      },
-      undefined,
-      () => {
-        viewer.className = "viewer fallback";
-        status.textContent = "Fallback 3D";
+      } catch {
+        viewer.className = "viewer error";
+        status.textContent = "3D не загрузилось — показано изображение модели";
+        retry.hidden = false;
+      } finally {
+        clearTimeout(timeout);
       }
-    );
+    }
+    retry.addEventListener("click", loadModel);
+    loadModel();
 
     function resize() {
       const { width, height } = wrap.getBoundingClientRect();

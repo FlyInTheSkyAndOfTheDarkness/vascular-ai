@@ -24,7 +24,7 @@ RUN --mount=type=bind,source=deploy/wheels,target=/wheels \
       pip install --no-cache-dir -r requirements.txt; \
     fi
 
-COPY app.py ./
+COPY app.py cabinet_ui.py cabinet_i18n.py ./
 COPY src/ ./src/
 COPY models/ ./models/
 COPY static/ ./static/

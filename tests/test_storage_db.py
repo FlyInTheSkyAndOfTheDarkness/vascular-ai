@@ -43,8 +43,16 @@ class DatabaseTests(unittest.TestCase):
         self.stack.enter_context(patch.object(app, 'secret_value', side_effect=lambda name, default='': default))
         app.read_table_cached.clear()
         self.stack.callback(app.read_table_cached.clear)
+        app.ensure_store();app.ensure_auth_store()
+        admin=app.public_user(app.users_df().iloc[0])
+        self.stack.enter_context(patch.object(app, 'current_user', return_value=admin))
+        app.append_patient({'patient_id':'TEST-BASE'})
 
     def test_migration_preserves_old_visits_and_adds_week(self):
+        from sqlalchemy import text
+        with self.engine.begin() as conn: conn.execute(text('DROP TABLE visits'))
+        self.ready.clear()
+        app.append_patient({'patient_id':'PT-0001'})
         legacy = [column for column in app.VISIT_COLUMNS if column != 'gestational_week']
         with self.engine.begin() as conn:
             definition = ', '.join(f'"{column}" TEXT' for column in legacy)
@@ -55,15 +63,15 @@ class DatabaseTests(unittest.TestCase):
         with self.engine.connect() as conn:
             self.assertIn('gestational_week', {c['name'] for c in inspect(conn).get_columns('visits')})
         self.assertEqual(app.visits_df().iloc[0]['visit_id'], 'old')
-        app.append_visit({'visit_id': 'new', 'patient_id': 'PT-0001', 'gestational_week': '25'})
+        app.append_visit({'patient_id':'TEST-BASE','visit_id': 'new', 'patient_id': 'PT-0001', 'gestational_week': '25'})
         self.assertEqual(len(app.visits_df()), 2)
         self.assertEqual(app.visits_df().iloc[-1]['gestational_week'], '25')
 
     def test_stale_snapshot_cannot_remove_another_sessions_new_visit(self):
         app.ensure_store()
-        app.append_visit({'visit_id': 'one'})
+        app.append_visit({'patient_id':'TEST-BASE','visit_id': 'one'})
         stale = app.visits_df()
-        app.append_visit({'visit_id': 'two'})
+        app.append_visit({'patient_id':'TEST-BASE','visit_id': 'two'})
         stale.loc[0, 'visit_note'] = 'updated'
         app.write_csv(stale, app.VISITS_PATH, app.VISIT_COLUMNS)
         self.assertEqual(set(app.visits_df().visit_id), {'one', 'two'})
@@ -85,12 +93,12 @@ class DatabaseTests(unittest.TestCase):
         app.append_patient({'patient_id': 'PT-0001'})
         with self.assertRaises(app.StorageError):
             app.append_patient({'patient_id': 'PT-0001'})
-        self.assertEqual(len(app.patients_df()), 1)
+        self.assertEqual(len(app.patients_df()), 2)
 
     def test_conflicting_batch_rolls_back_prior_updates(self):
         app.ensure_store()
-        app.append_visit({'visit_id': 'one'})
-        app.append_visit({'visit_id': 'two'})
+        app.append_visit({'patient_id':'TEST-BASE','visit_id': 'one'})
+        app.append_visit({'patient_id':'TEST-BASE','visit_id': 'two'})
         stale = app.visits_df()
         current = app.visits_df()
         current.loc[current.visit_id == 'two', 'visit_note'] = 'Other session'
@@ -109,7 +117,7 @@ class DatabaseTests(unittest.TestCase):
 
     def test_failed_transaction_rolls_back_and_raises(self):
         app.ensure_store()
-        app.append_visit({'visit_id': 'keep'})
+        app.append_visit({'patient_id':'TEST-BASE','visit_id': 'keep'})
         frame = app.visits_df()
         frame.loc[0, 'visit_note'] = 'new note'
         with patch.object(self.engine, 'begin', side_effect=OSError('offline')):

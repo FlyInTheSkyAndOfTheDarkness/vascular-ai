@@ -41,7 +41,7 @@ STORAGE_TABLES = {
 }
 ATTACHMENT_BUCKET = "attachments"
 LOGO_URL = "app/static/landing/branding/vascularai-logo.png"
-MODEL_VIEWER_URL = "/app/static/landing/model-viewer.html"
+MODEL_VIEWER_PATH = PROJECT_ROOT / "static" / "landing" / "model-viewer.html"
 LANDING_FAVICON = (
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E"
     "%3Crect width='40' height='40' rx='12' fill='%230972df'/%3E"
@@ -82,6 +82,7 @@ ENTRY_TIPS = [
 
 PATIENT_COLUMNS = [
     "patient_id",
+    "owner_user_id",
     "initials",
     "age",
     "gestational_week",
@@ -277,7 +278,7 @@ st.set_page_config(
     page_title="VascularAI Кабинет",
     page_icon=LANDING_FAVICON,
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 
@@ -711,7 +712,8 @@ def add_style() -> None:
             100% { background: rgba(255, 255, 255, 0.22); }
         }
 
-        iframe[src*="model-viewer.html"] {
+        iframe[src*="model-viewer.html"],
+        iframe[srcdoc*="VascularAI 3D model"] {
             border: 0 !important;
             display: block;
             margin: 0.5rem 0 0;
@@ -2546,6 +2548,13 @@ def ensure_store() -> None:
 
 
 def read_csv(path: Path, columns: list[str]) -> pd.DataFrame:
+    frame = read_csv_unscoped(path, columns)
+    if path in {PATIENTS_PATH, VISITS_PATH, ATTACHMENTS_PATH, ACTIVITY_PATH}:
+        return scope_clinical_frame(frame, path)
+    return frame
+
+
+def read_csv_unscoped(path: Path, columns: list[str]) -> pd.DataFrame:
     engine = engine_or_none()
     if engine is not None:
         table = table_name(path)
@@ -2592,6 +2601,10 @@ def read_table_cached(cache_key: str, table: str, columns: tuple[str, ...], revi
 
 
 def write_csv(df: pd.DataFrame, path: Path, columns: list[str]) -> None:
+    clinical = path in {PATIENTS_PATH, VISITS_PATH, ATTACHMENTS_PATH}
+    if clinical:
+        for row in df.fillna("").astype(str).to_dict("records"):
+            authorize_clinical_write(row, path, creating=False)
     engine = engine_or_none()
     if engine is not None:
         from sqlalchemy import text
@@ -2627,10 +2640,14 @@ def write_csv(df: pd.DataFrame, path: Path, columns: list[str]) -> None:
         return
 
     path.parent.mkdir(parents=True, exist_ok=True)
+    if clinical:
+        original = read_csv_unscoped(path, columns)
+        df = pd.concat([original.loc[~original[columns[0]].isin(df[columns[0]])], df], ignore_index=True)
     df[columns].to_csv(path, index=False, encoding="utf-8")
 
 
 def append_row(row: dict[str, object], path: Path, columns: list[str]) -> None:
+    row = authorize_clinical_write(row, path, creating=True)
     engine = engine_or_none()
     payload = pd.DataFrame([row]).reindex(columns=columns).fillna("")
     if engine is not None:
@@ -2642,8 +2659,12 @@ def append_row(row: dict[str, object], path: Path, columns: list[str]) -> None:
         except Exception as error:
             raise StorageError("Не удалось добавить запись. Проверьте, что ID не занят, и повторите попытку.") from error
     else:
-        frame = pd.concat([read_csv(path, columns), payload], ignore_index=True)
-        write_csv(frame, path, columns)
+        existing = read_csv_unscoped(path, columns)
+        if str(row.get(columns[0], "")) in existing[columns[0]].tolist():
+            raise StorageError("Record ID is already in use")
+        frame = pd.concat([existing, payload], ignore_index=True)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        frame[columns].to_csv(path, index=False, encoding="utf-8")
 
 
 def hash_password(password: str) -> str:
@@ -2897,6 +2918,114 @@ def create_user_account(username: str, full_name: str, role: str, status: str, p
     return True, f"Аккаунт {username} создан."
 
 
+def clinical_actor() -> dict | None:
+    """Resolve privileges from the account record, never from names or form fields."""
+    user = current_user()
+    if not user or not user.get("user_id"):
+        return None
+    users = read_csv_unscoped(USERS_PATH, USER_COLUMNS)
+    rows = users.loc[(users["user_id"] == str(user["user_id"])) & (users["status"] == "active")]
+    if len(rows) != 1 or rows.iloc[0]["role"] not in {"doctor", "admin"}:
+        return None
+    return public_user(rows.iloc[0])
+
+
+def scope_clinical_frame(frame: pd.DataFrame, path: Path) -> pd.DataFrame:
+    actor = clinical_actor()
+    if actor and is_admin(actor):
+        return frame
+    if not actor:
+        scoped = frame.iloc[:0].copy()
+    elif path == ACTIVITY_PATH:
+        patients = read_csv_unscoped(PATIENTS_PATH, PATIENT_COLUMNS)
+        allowed = patients.loc[patients["owner_user_id"] == actor["user_id"], "patient_id"]
+        clinical = frame["action"].isin(["patient_created", "visit_calculated", "attachment_uploaded"])
+        scoped = frame.loc[(frame["actor"] == actor["username"]) & (~clinical | frame["target"].isin(allowed))].copy()
+    else:
+        patients = frame if path == PATIENTS_PATH else read_csv_unscoped(PATIENTS_PATH, PATIENT_COLUMNS)
+        allowed = patients.loc[patients["owner_user_id"] == actor["user_id"], "patient_id"]
+        scoped = frame.loc[frame["patient_id"].isin(allowed)].copy()
+    # Pandas propagates attrs: never carry a raw snapshot containing other doctors' rows.
+    scoped.attrs = {}
+    key = scoped.columns[0]
+    scoped.attrs["original_rows"] = {row[key]: row for row in scoped.to_dict("records")}
+    return scoped
+
+
+def require_patient_access(patient_id: str) -> None:
+    if not str(patient_id) or not (patients_df()["patient_id"] == str(patient_id)).any():
+        raise PermissionError("Patient is unavailable to this account")
+
+
+def authorize_clinical_write(row: dict, path: Path, *, creating: bool) -> dict:
+    if path not in {PATIENTS_PATH, VISITS_PATH, ATTACHMENTS_PATH}:
+        return row
+    actor = clinical_actor()
+    if not actor:
+        raise PermissionError("An active clinical account is required")
+    result = dict(row)
+    if path == PATIENTS_PATH and creating:
+        result["owner_user_id"] = actor["user_id"]
+        return result
+    if not creating:
+        columns = PATIENT_COLUMNS if path == PATIENTS_PATH else VISIT_COLUMNS if path == VISITS_PATH else ATTACHMENT_COLUMNS
+        key = columns[0]
+        existing = read_csv_unscoped(path, columns)
+        rows = existing.loc[existing[key] == str(row[key])]
+        if len(rows) != 1:
+            raise PermissionError("Record is unavailable")
+        original = rows.iloc[0]
+        require_patient_access(str(original["patient_id"]))
+        if str(row["patient_id"]) != str(original["patient_id"]):
+            raise PermissionError("Patient reassignment is not supported")
+        if path == PATIENTS_PATH and str(row.get("owner_user_id", "")) != str(original["owner_user_id"]):
+            raise PermissionError("Ownership cannot be changed through a clinical edit")
+    require_patient_access(str(row.get("patient_id", "")))
+    return result
+
+
+def migrate_patient_owners() -> dict:
+    """Maintenance-only backfill from unambiguous creation events; unknowns stay private."""
+    patients = read_csv_unscoped(PATIENTS_PATH, PATIENT_COLUMNS)
+    events = read_csv_unscoped(ACTIVITY_PATH, ACTIVITY_COLUMNS)
+    users = read_csv_unscoped(USERS_PATH, USER_COLUMNS)
+    changed = 0
+    for index, patient in patients.iterrows():
+        if patient["owner_user_id"]:
+            continue
+        creation = events.loc[(events["action"] == "patient_created") & (events["target"] == patient["patient_id"])]
+        if len(creation) != 1:
+            continue
+        event = creation.iloc[0]
+        accounts = users.loc[(users["username"] == event["actor"]) & (users["created_at"] <= event["event_at"])]
+        if len(accounts) != 1:
+            continue
+        patients.loc[index, "owner_user_id"] = accounts.iloc[0]["user_id"]
+        changed += 1
+    if changed:
+        engine = engine_or_none()
+        if engine is not None:
+            from sqlalchemy import text
+            with engine.begin() as conn:
+                for row in patients.loc[patients["owner_user_id"] != ""].to_dict("records"):
+                    conn.execute(text('UPDATE patients SET owner_user_id=:owner WHERE patient_id=:patient AND COALESCE(owner_user_id, \'\')=\'\''),
+                                 {"owner": row["owner_user_id"], "patient": row["patient_id"]})
+            bump_data_revision()
+        else:
+            patients[PATIENT_COLUMNS].to_csv(PATIENTS_PATH, index=False, encoding="utf-8")
+    return {"assigned": changed, "unassigned": int((patients["owner_user_id"] == "").sum()), "total": len(patients)}
+
+
+def reset_clinical_session(user: dict | None) -> None:
+    identity = (str(user.get("user_id", "")), str(user.get("role", ""))) if user else None
+    previous = st.session_state.get("_clinical_identity")
+    if previous != identity:
+        keep = {key: st.session_state[key] for key in ("auth_user", "ui_language") if key in st.session_state}
+        st.session_state.clear()
+        st.session_state.update(keep)
+        st.session_state["_clinical_identity"] = identity
+
+
 def patients_df() -> pd.DataFrame:
     return read_csv(PATIENTS_PATH, PATIENT_COLUMNS)
 
@@ -2931,6 +3060,7 @@ def log_event(action: str, target: str = "", details: str = "", actor: dict[str,
 
 
 def next_patient_id(patients: pd.DataFrame) -> str:
+    patients = read_csv_unscoped(PATIENTS_PATH, PATIENT_COLUMNS)
     if patients.empty:
         return "PT-0001"
     ids = patients["patient_id"].astype(str).tolist()
@@ -3060,7 +3190,12 @@ def render_login_page() -> None:
             f'<div class="entry-brand"><img src="{LOGO_URL}" alt="VascularAI" /></div>',
             unsafe_allow_html=True,
         )
-        st.iframe(MODEL_VIEWER_URL, height=440, width="stretch", tab_index=-1)
+        # Embed trusted HTML explicitly: /app/static is also a real path in Docker.
+        # A base URL keeps the viewer's JS, GLB and poster on Streamlit's static route.
+        viewer_html = MODEL_VIEWER_PATH.read_text(encoding="utf-8").replace(
+            "<head>", '<head><base href="/app/static/landing/">', 1
+        )
+        st.iframe(viewer_html, height=440, width="stretch", tab_index=-1)
         st.html(
             f'<div class="entry-tips"><small>Коротко о платформе</small>{tips_html}'
             f'<div class="entry-tip-dots">{dots_html}</div></div>'
@@ -5132,77 +5267,9 @@ def main() -> None:
 
 
 def app_body() -> None:
-    add_style()
-    check_deployment_settings()
-    ensure_store()
-    ensure_auth_store()
-
-    user = current_user()
-    if user is None:
-        render_login_page()
-        return
-    user = refresh_current_user(user)
-    if user is None:
-        st.warning("Сессия завершена. Войдите снова.")
-        render_login_page()
-        return
-
-    bundle: dict = {"metrics": {}}
-    if not is_admin(user):
-        try:
-            bundle = load_bundle()
-        except FileNotFoundError:
-            st.error("Модель не найдена. Запустите обучение: python src/train_model.py")
-            st.stop()
-
-    pages = (
-        ["Админ-панель", "Настройки"]
-        if is_admin(user)
-        else ["Дашборд", "Новый расчёт", "Пациенты", "Отчёты", "Настройки"]
-    )
-    if st.session_state.get(NAV_KEY) not in pages:
-        st.session_state[NAV_KEY] = pages[0]
-
-    # ссылки с лендинга вида /login, /intake, /patients → ?page=<slug>
-    apply_page_from_query(pages)
-
-    page = st.session_state.get(NAV_KEY) or pages[0]
-    render_sidebar(user, pages)
-    home_page = "Админ-панель" if is_admin(user) else "Дашборд"
-    crumbs: list[tuple[str, str | None]] = [(home_page, home_page), (page, None)]
-    if page == home_page:
-        crumbs = [(page, None)]
-    if page == "Пациенты" and st.session_state.get(PATIENT_VIEW_KEY):
-        crumbs = [(home_page, home_page), ("Пациенты", "Пациенты"), ("История пациента", None)]
-    query = render_topbar(user, page, crumbs)
-    if query:
-        matched_patient = find_patient_by_query(query)
-        if matched_patient:
-            st.session_state[PATIENT_VIEW_KEY] = matched_patient
-            st.session_state[NAV_KEY] = "Пациенты"
-            st.rerun()
-        else:
-            st.info(f"Пациент по запросу «{query}» не найден.")
-
-    if is_admin(user):
-        if page == "Настройки":
-            render_settings_page(user)
-        else:
-            render_admin_workspace(user)
-        return
-
-    if page == "Дашборд":
-        render_home_page(bundle, user)
-    elif page == "Новый расчёт":
-        render_intake_page(bundle, user)
-    elif page == "Пациенты":
-        render_patients_page(user)
-    elif page == "Отчёты":
-        render_dashboard_page()
-    elif page == "Настройки":
-        render_settings_page(user)
-    else:
-        render_home_page(bundle, user)
+    from types import SimpleNamespace
+    from cabinet_ui import render
+    render(SimpleNamespace(**globals()))
 
 
 if __name__ == "__main__":
